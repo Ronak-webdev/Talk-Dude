@@ -16,7 +16,6 @@ import useAuthUser from "./hooks/useAuthUser.js";
 import Layout from "./components/Layout.jsx";
 import { useThemeStore } from "./store/useThemeStore.js";
 
-
 const App = () => {
   const { isLoading, authUser } = useAuthUser();
   const { theme } = useThemeStore();
@@ -41,18 +40,29 @@ const App = () => {
             )
           }
         />
+
         <Route
           path="/signup"
           element={
-            !isAuthenticated ? <SignUpPage /> : <Navigate to={isOnboarded ? "/" : "/onboarding"} />
+            !isAuthenticated ? (
+              <SignUpPage />
+            ) : (
+              <Navigate to={isOnboarded ? "/" : "/onboarding"} />
+            )
           }
         />
+
         <Route
           path="/login"
           element={
-            !isAuthenticated ? <LoginPage /> : <Navigate to={isOnboarded ? "/" : "/onboarding"} />
+            !isAuthenticated ? (
+              <LoginPage />
+            ) : (
+              <Navigate to={isOnboarded ? "/" : "/onboarding"} />
+            )
           }
         />
+
         <Route
           path="/notifications"
           element={
@@ -65,6 +75,7 @@ const App = () => {
             )
           }
         />
+
         <Route
           path="/friends"
           element={
@@ -77,6 +88,7 @@ const App = () => {
             )
           }
         />
+
         <Route
           path="/call/:id"
           element={
@@ -101,15 +113,12 @@ const App = () => {
           }
         />
 
+        {/* 🔥 FIXED: Allow onboarding page to open even if user is already onboarded */}
         <Route
           path="/onboarding"
           element={
             isAuthenticated ? (
-              !isOnboarded ? (
-                <OnboardingPage />
-              ) : (
-                <Navigate to="/" />
-              )
+              <OnboardingPage />
             ) : (
               <Navigate to="/login" />
             )
@@ -121,4 +130,5 @@ const App = () => {
     </div>
   );
 };
+
 export default App;

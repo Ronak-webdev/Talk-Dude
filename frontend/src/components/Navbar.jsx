@@ -23,23 +23,14 @@ const Navbar = ({ toggleSidebar, isMobile = false }) => {
             <Menu className="h-5 w-5" />
           </button>
           
-          {/* Logo - Show on all pages when on mobile */}
-          <Link 
-            to="/" 
-            className={`flex items-center gap-2 ${!isChatPage && isMobile ? 'block' : 'hidden md:flex'}`}
-          >
-            <ShipWheelIcon className="h-7 w-7 md:h-8 md:w-8 text-primary" />
-            <span className="text-xl md:text-2xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
-              TalkTribe
-            </span>
-          </Link>
+        
           
           {/* Show logo in chat page on all devices */}
           {isChatPage && (
             <Link to="/" className="hidden md:flex items-center gap-2">
               <ShipWheelIcon className="h-8 w-8 text-primary" />
               <span className="text-2xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
-                TalkTribe
+                TalkDude
               </span>
             </Link>
           )}

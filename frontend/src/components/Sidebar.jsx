@@ -25,7 +25,7 @@ const Sidebar = () => {
         <Link to="/" className="flex items-center gap-2.5">
           <ShipWheelIcon className="h-8 w-8 md:h-9 md:w-9 text-primary" />
           <span className="text-2xl md:text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
-            TalkTribe
+            TalkDude
           </span>
         </Link>
       </div>
@@ -74,7 +74,8 @@ const Sidebar = () => {
 
       {/* User Profile */}
       <div className='p-3 border-t border-base-300 mt-auto'>
-        <Link to="/profile" className="block hover:bg-base-300/50 rounded-lg p-2 transition-colors">
+        {/* 🔥 CHANGED HERE: from /profile → /onboarding */}
+        <Link to="/onboarding" className="block hover:bg-base-300/50 rounded-lg p-2 transition-colors">
           <div className="flex items-center gap-3">
             <div className="avatar">
               <div className="w-9 h-9 md:w-10 md:h-10 rounded-full overflow-hidden">
