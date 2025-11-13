@@ -24,7 +24,9 @@ const allowedOrigins = [
   "https://talktribebyvp.vercel.app",
   "https://talktribe.vercel.app",
   "https://talk-dude.vercel.app",
-  "https://talk-dude-2.onrender.com"
+  "https://talk-dude-2.onrender.com",
+  "https://talk-dude-4.onrender.com",
+  "https://talk-dude-3.onrender.com"   // 🔥 NEW FRONTEND URL ADDED
 ];
 
 const corsOptions = {
