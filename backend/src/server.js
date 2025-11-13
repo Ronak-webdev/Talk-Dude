@@ -18,14 +18,16 @@ const __dirname = path.resolve();
 // Configure CORS with specific options
 const corsOptions = {
   origin: (origin, callback) => {
-    const allowedOrigins = [
-      'https://talktribebyvp.vercel.app',
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'https://talktribe.vercel.app',
-      'https://talktribe.onrender.com',
-      'http://localhost:3000'
-    ];
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:3000',
+  'https://talktribebyvp.vercel.app',
+  'https://talktribe.vercel.app',
+  'https://talk-dude.vercel.app',
+  'https://talk-dude-2.onrender.com'
+];
+
     
     console.log('CORS Origin Check:', { origin, allowedOrigins });
     

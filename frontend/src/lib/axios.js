@@ -1,10 +1,10 @@
 import axios from "axios";
 
 // Set the base URL for API requests
-const BASE_URL = import.meta.env.VITE_API_URL || 
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || 
   (import.meta.env.MODE === "development" 
     ? "http://localhost:5001/api" 
-    : "https://talktribe.onrender.com/api");
+    : "https://talk-dude-2.onrender.com/api");
 
 console.log("Using API base URL:", BASE_URL);
 
