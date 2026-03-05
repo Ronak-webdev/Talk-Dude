@@ -305,8 +305,8 @@ input:-webkit-autofill:active {
           </div>
 
           {error && (
-            <div className="alert alert-error mb-4">
-              <span>{error.response.data.message}</span>
+            <div className="alert alert-error mb-4 text-white">
+              <span>{error.response?.data?.message || error.message || "An unexpected error occurred"}</span>
             </div>
           )}
 

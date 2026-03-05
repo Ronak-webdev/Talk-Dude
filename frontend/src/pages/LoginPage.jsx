@@ -387,23 +387,23 @@ input:-webkit-autofill:active {
           </div>
           {/* ERROR MESSAGE DISPLAY */}
           {error && (
-            <div className="alert alert-error mb-4">
-              <span>{error.response.data.message}</span>
+            <div className="alert alert-error mb-4 text-white">
+              <span>{error.response?.data?.message || error.message || "An unexpected error occurred"}</span>
             </div>
           )}
           {/* PANDA CONTAINER */}
           <div className="flex-1 flex justify-center items-center relative h-96 mt-8">
             <div className="panda-wrapper">
               <div>
-                    <h2 className="text-xl font-semibold text-center" >
-                      Welcome Back
-                    </h2>
-                    <p className="text-sm opacity-70 text-center">Sign in to your account to continue your language journey</p>
-                  </div>
+                <h2 className="text-xl font-semibold text-center" >
+                  Welcome Back
+                </h2>
+                <p className="text-sm opacity-70 text-center">Sign in to your account to continue your language journey</p>
+              </div>
               <div className="panda-container">
                 <form onSubmit={handleLogin}>
                   {/* Description */}
-                  
+
                   {/* EMAIL */}
                   <label htmlFor="email">Email</label>
                   <input
