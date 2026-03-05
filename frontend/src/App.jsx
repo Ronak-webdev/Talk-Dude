@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import HomePage from "./pages/HomePage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
@@ -19,6 +19,7 @@ import { useThemeStore } from "./store/useThemeStore.js";
 const App = () => {
   const { isLoading, authUser } = useAuthUser();
   const { theme } = useThemeStore();
+  const location = useLocation();
 
   const isAuthenticated = Boolean(authUser);
   const isOnboarded = authUser?.isOnboarded;
@@ -58,7 +59,9 @@ const App = () => {
             !isAuthenticated ? (
               <LoginPage />
             ) : (
-              <Navigate to={isOnboarded ? "/" : "/onboarding"} />
+              <Navigate to={
+                location.state?.from?.pathname || (isOnboarded ? "/" : "/onboarding")
+              } />
             )
           }
         />
@@ -95,7 +98,7 @@ const App = () => {
             isAuthenticated && isOnboarded ? (
               <CallPage />
             ) : (
-              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} state={{ from: location }} replace />
             )
           }
         />

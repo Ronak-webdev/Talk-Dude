@@ -6,8 +6,8 @@ function getCookieOptions() {
   return {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    sameSite: "none",
-    secure: true,
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    secure: process.env.NODE_ENV === "production",
     path: "/"
   };
 }
@@ -104,7 +104,7 @@ export async function onboard(req, res) {
   try {
     const userId = req.user._id;
 
-    const { fullName, bio, nativeLanguage, learningLanguage, location } = req.body;
+    const { fullName, bio, nativeLanguage, learningLanguage, location, profilePic } = req.body;
 
     if (!fullName || !bio || !nativeLanguage || !learningLanguage || !location) {
       return res.status(400).json({
@@ -120,6 +120,7 @@ export async function onboard(req, res) {
         nativeLanguage,
         learningLanguage,
         location,
+        profilePic,
         isOnboarded: true,
       },
       { new: true }

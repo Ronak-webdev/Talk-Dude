@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import useAuthUser from "../hooks/useAuthUser";
 import { useQuery } from "@tanstack/react-query";
 import { getStreamToken } from "../lib/api";
+import { useChatContext } from "../context/ChatContext";
 
 import {
   Channel,
@@ -24,65 +25,35 @@ const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 const ChatPage = () => {
   const { id: targetUserId } = useParams();
 
-  const [chatClient, setChatClient] = useState(null);
+  const { chatClient } = useChatContext();
   const [channel, setChannel] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const { authUser } = useAuthUser();
 
-  const { data: tokenData } = useQuery({
-    queryKey: ["streamToken"],
-    queryFn: getStreamToken,
-    enabled: !!authUser, // this will run only when authUser is available
-  });
-
   useEffect(() => {
-    const initChat = async () => {
-      if (!tokenData?.token || !authUser) return;
+    const createChannel = async () => {
+      if (!chatClient || !authUser) return;
 
-      try {
-        console.log("Initializing stream chat client...");
+      const channelId = [authUser._id, targetUserId].sort().join("-");
 
-        const client = StreamChat.getInstance(STREAM_API_KEY);
+      const currChannel = chatClient.channel("messaging", channelId, {
+        members: [authUser._id, targetUserId],
+      });
 
-        await client.connectUser(
-          {
-            id: authUser._id,
-            name: authUser.fullName,
-            image: authUser.profilePic,
-          },
-          tokenData.token
-        );
+      await currChannel.watch();
 
-        //
-        const channelId = [authUser._id, targetUserId].sort().join("-");
-
-        // you and me
-        // if i start the chat => channelId: [myId, yourId]
-        // if you start the chat => channelId: [yourId, myId]  => [myId,yourId]
-
-        const currChannel = client.channel("messaging", channelId, {
-          members: [authUser._id, targetUserId],
-        });
-
-        await currChannel.watch();
-
-        setChatClient(client);
-        setChannel(currChannel);
-      } catch (error) {
-        console.error("Error initializing chat:", error);
-        toast.error("Could not connect to chat. Please try again.");
-      } finally {
-        setLoading(false);
-      }
+      setChannel(currChannel);
+      setLoading(false);
     };
 
-    initChat();
-  }, [tokenData, authUser, targetUserId]);
+    createChannel();
+  }, [chatClient, authUser, targetUserId]);
 
   const handleVideoCall = () => {
     if (channel) {
-      const callUrl = `${window.location.origin}/call/${channel.id}`;
+      const baseUrl = import.meta.env.VITE_CLIENT_URL || window.location.origin;
+      const callUrl = `${baseUrl}/call/${channel.id}`;
 
       channel.sendMessage({
         text: `I've started a video call. Join me here: ${callUrl}`,

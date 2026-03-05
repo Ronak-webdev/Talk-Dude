@@ -1,42 +1,43 @@
 import User from "../models/User.js";
 import FriendRequest from "../models/FriendRequest.js";
+import { getReceiverSocketId, io } from "../lib/socket.js";
 
 export async function getRecommendedUsers(req, res) {
-	try {
-		const currentUserId = req.user.id;
-		const currentUser = await User.findById(req.user.id).select("friends");
+  try {
+    const currentUserId = req.user.id;
+    const currentUser = await User.findById(req.user.id).select("friends");
 
-		if (!currentUser) {
-			return res.status(404).json({ message: "User not found" });
-		}
+    if (!currentUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-		// Find users with pending incoming friend requests
-		const incomingRequests = await FriendRequest.find({ recipient: currentUserId, status: "pending" }).select("sender");
-		const incomingRequestSenders = incomingRequests.map((req) => req.sender);
+    // Find users with pending incoming friend requests
+    const incomingRequests = await FriendRequest.find({ recipient: currentUserId, status: "pending" }).select("sender");
+    const incomingRequestSenders = incomingRequests.map((req) => req.sender);
 
-		// Find users with pending outgoing friend requests
-		const outgoingRequests = await FriendRequest.find({ sender: currentUserId, status: "pending" }).select("recipient");
-		const outgoingRequestRecipients = outgoingRequests.map((req) => req.recipient);
+    // Find users with pending outgoing friend requests
+    const outgoingRequests = await FriendRequest.find({ sender: currentUserId, status: "pending" }).select("recipient");
+    const outgoingRequestRecipients = outgoingRequests.map((req) => req.recipient);
 
-		const excludedIds = [
-			...currentUser.friends,
-			...incomingRequestSenders,
-			...outgoingRequestRecipients,
-		];
+    const excludedIds = [
+      ...currentUser.friends,
+      ...incomingRequestSenders,
+      ...outgoingRequestRecipients,
+    ];
 
-		const recommendedUsers = await User.find({
-			$and: [
-				{ _id: { $ne: currentUserId } }, // Exclude current user
-				{ _id: { $nin: excludedIds } }, // Exclude all connections
-				{ isOnboarded: true },
-			],
-		}).select("fullName profilePic nativeLanguage learningLanguage location bio");
+    const recommendedUsers = await User.find({
+      $and: [
+        { _id: { $ne: currentUserId } }, // Exclude current user
+        { _id: { $nin: excludedIds } }, // Exclude all connections
+        { isOnboarded: true },
+      ],
+    }).select("fullName profilePic nativeLanguage learningLanguage location bio");
 
-		res.status(200).json(recommendedUsers);
-	} catch (error) {
-		console.error("Error in getRecommendedUsers controller", error.message);
-		res.status(500).json({ message: "Internal Server Error" });
-	}
+    res.status(200).json(recommendedUsers);
+  } catch (error) {
+    console.error("Error in getRecommendedUsers controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 }
 
 export async function getMyFriends(req, res) {
@@ -96,6 +97,11 @@ export async function sendFriendRequest(req, res) {
       sender: myId,
       recipient: recipientId,
     });
+
+    const receiverSocketId = getReceiverSocketId(recipientId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("new_friend_request", friendRequest);
+    }
 
     res.status(201).json(friendRequest);
   } catch (error) {
@@ -228,27 +234,27 @@ export async function declineFriendRequest(req, res) {
 }
 
 export async function unfriend(req, res) {
-	try {
-		const currentUserId = req.user.id;
-		const { friendId } = req.params;
+  try {
+    const currentUserId = req.user.id;
+    const { friendId } = req.params;
 
-		// 1. Remove friend from current user's friend list
-		await User.findByIdAndUpdate(currentUserId, { $pull: { friends: friendId } });
+    // 1. Remove friend from current user's friend list
+    await User.findByIdAndUpdate(currentUserId, { $pull: { friends: friendId } });
 
-		// 2. Remove current user from friend's friend list
-		await User.findByIdAndUpdate(friendId, { $pull: { friends: currentUserId } });
+    // 2. Remove current user from friend's friend list
+    await User.findByIdAndUpdate(friendId, { $pull: { friends: currentUserId } });
 
-		// 3. Delete the friend request between them to allow for future requests
-		await FriendRequest.findOneAndDelete({
-			$or: [
-				{ sender: currentUserId, recipient: friendId },
-				{ sender: friendId, recipient: currentUserId },
-			],
-		});
+    // 3. Delete the friend request between them to allow for future requests
+    await FriendRequest.findOneAndDelete({
+      $or: [
+        { sender: currentUserId, recipient: friendId },
+        { sender: friendId, recipient: currentUserId },
+      ],
+    });
 
-		res.status(200).json({ message: "User unfriended successfully" });
-	} catch (error) {
-		console.error("Error in unfriend controller", error.message);
-		res.status(500).json({ message: "Internal Server Error" });
-	}
+    res.status(200).json({ message: "User unfriended successfully" });
+  } catch (error) {
+    console.error("Error in unfriend controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 }

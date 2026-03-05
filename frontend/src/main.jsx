@@ -8,13 +8,20 @@ import { BrowserRouter } from "react-router-dom";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import { SocketContextProvider } from "./context/SocketContext.jsx";
+import { ChatContextProvider } from "./context/ChatContext.jsx";
+
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <App />
+        <SocketContextProvider>
+          <ChatContextProvider>
+            <App />
+          </ChatContextProvider>
+        </SocketContextProvider>
       </QueryClientProvider>
     </BrowserRouter>
   </StrictMode>

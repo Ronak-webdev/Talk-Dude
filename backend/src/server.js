@@ -10,7 +10,8 @@ import chatRoutes from "./routes/chat.route.js";
 
 import { connectDB } from "./lib/db.js";
 
-const app = express();
+import { app, server } from "./lib/socket.js";
+
 const PORT = process.env.PORT;
 
 const __dirname = path.resolve();
@@ -26,7 +27,9 @@ const allowedOrigins = [
   "https://talk-dude.vercel.app",
   "https://talk-dude-2.onrender.com",
   "https://talk-dude-4.onrender.com",
-  "https://talk-dude-3.onrender.com"   // 🔥 NEW FRONTEND URL ADDED
+  "https://talk-dude-3.onrender.com",   // 🔥 NEW FRONTEND URL ADDED
+  "http://192.168.1.9:5173", // Mobile Frontend
+  "http://192.168.117.32:5173" // New Mobile Frontend IP
 ];
 
 const corsOptions = {
@@ -87,7 +90,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   connectDB();
 });
