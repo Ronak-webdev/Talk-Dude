@@ -26,50 +26,43 @@ const allowedOrigins = [
   "https://talktribe.vercel.app",
   "https://talk-dude.vercel.app",
   "https://talk-dude-2.onrender.com",
+  "https://talk-dude-3.onrender.com",
   "https://talk-dude-4.onrender.com",
-  "https://talk-dude-3.onrender.com",   // 🔥 NEW FRONTEND URL ADDED
-  "http://192.168.1.9:5173", // Mobile Frontend
-  "http://192.168.117.32:5173" // New Mobile Frontend IP
+  "http://192.168.1.9:5173",
+  "http://192.168.117.32:5173"
 ];
 
 const corsOptions = {
   origin: (origin, callback) => {
-    console.log("CORS Origin Check:", origin);
-
-    // Allow requests with NO ORIGIN (mobile apps, backend-to-backend, curl)
+    // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
 
-    // ALLOW ANY VERCEL DEPLOYMENT (Preview + Production)
-    if (origin.endsWith(".vercel.app")) {
-      console.log("Allowed Vercel Origin:", origin);
-      return callback(null, true);
-    }
-
-    // Normal explicit whitelist
+    // Allow explicitly listed origins
     if (allowedOrigins.includes(origin)) {
-      console.log("Explicitly Allowed Origin:", origin);
       return callback(null, true);
     }
 
-    // Block everything else
-    const msg = `CORS BLOCKED: ${origin} NOT allowed.`;
-    console.error(msg);
-    return callback(new Error(msg), false);
-  },
+    // Allow all Vercel subdomains
+    if (origin.endsWith(".vercel.app")) {
+      return callback(null, true);
+    }
 
+    // Block other origins
+    console.error(`CORS blocked for: ${origin}`);
+    return callback(new Error("Not allowed by CORS"), false);
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
   allowedHeaders: [
     "Content-Type",
     "Authorization",
+    "Accept",
     "x-auth-token",
     "X-Requested-With"
   ],
-  exposedHeaders: ["Content-Range", "X-Content-Range"],
-  maxAge: 600
+  exposedHeaders: ["set-cookie"],
 };
 
-// Apply CORS
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 

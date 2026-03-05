@@ -15,9 +15,10 @@ const io = new Server(server, {
             "https://talktribe.vercel.app",
             "https://talk-dude.vercel.app",
             "https://talk-dude-2.onrender.com",
-            "https://talk-dude-4.onrender.com",
             "https://talk-dude-3.onrender.com",
+            "https://talk-dude-4.onrender.com",
             "http://192.168.1.9:5173",
+            "http://192.168.117.32:5173",
         ],
     },
 });
