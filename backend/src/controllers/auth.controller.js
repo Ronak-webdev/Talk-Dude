@@ -59,8 +59,8 @@ export async function signup(req, res) {
     return res.status(201).json({ success: true, user: newUser });
 
   } catch (error) {
-    console.log("Error in signup controller", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error in signup controller:", error);
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 }
 
@@ -85,8 +85,8 @@ export async function login(req, res) {
     return res.status(200).json({ success: true, user });
 
   } catch (error) {
-    console.log("Error in login controller", error.message);
-    return res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error in login controller:", error);
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 }
 
