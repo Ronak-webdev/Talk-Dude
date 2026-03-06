@@ -3,12 +3,13 @@ import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 
 function getCookieOptions() {
+  const isProduction = process.env.NODE_ENV?.toLowerCase() === "production";
   return {
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-    secure: process.env.NODE_ENV === "production",
-    path: "/"
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
+    path: "/",
   };
 }
 
