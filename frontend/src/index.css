@@ -35,7 +35,8 @@
   }
 
   body {
-    @apply bg-neutral-950 text-foreground font-['Be_Vietnam_Pro', sans-serif] antialiased;
+    @apply bg-neutral-950 text-foreground antialiased;
+    font-family: 'Be Vietnam Pro', sans-serif;
     background-image:
       radial-gradient(at 0% 0%, hsla(221, 83%, 53%, 0.1) 0px, transparent 50%),
       radial-gradient(at 100% 100%, hsla(262, 83%, 58%, 0.1) 0px, transparent 50%);
