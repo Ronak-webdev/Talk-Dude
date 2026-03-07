@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import useLogin from "../hooks/useLogin";
 
 const LoginPage = () => {
-  // Force sync comment
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
