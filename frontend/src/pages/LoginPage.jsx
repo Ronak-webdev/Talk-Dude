@@ -68,6 +68,8 @@ const LoginPage = () => {
                 <input
                   type="password"
                   placeholder="Password"
+                  autoComplete="current-password"
+                  spellCheck="false"
                   className="w-full pl-12 pr-4 py-4 rounded-2xl glass-dark border border-white/5 focus:border-blue-500/50 transition-all outline-none"
                   value={loginData.password}
                   onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}

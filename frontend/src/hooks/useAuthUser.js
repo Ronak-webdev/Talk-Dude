@@ -15,7 +15,8 @@ const useAuthUser = () => {
       return getAuthUser();
     },
     enabled: isClerkLoaded && isSignedIn,
-    retry: false,
+    retry: true, // Retry if backend sync is still in progress
+    staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
   });
 

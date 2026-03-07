@@ -35,12 +35,17 @@ const App = () => {
         <Route
           path="/"
           element={
-            isAuthenticated && isOnboarded ? (
+            isClerkSignedIn && !isAuthenticated ? (
+              <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center">
+                <PageLoader />
+                <p className="mt-4 text-lg font-semibold animate-pulse">Connecting to your account...</p>
+              </div>
+            ) : isAuthenticated && isOnboarded ? (
               <Layout showSidebar={true}>
                 <HomePage />
               </Layout>
             ) : (
-              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+              <Navigate to={!isClerkSignedIn ? "/login" : "/onboarding"} />
             )
           }
         />
@@ -48,10 +53,10 @@ const App = () => {
         <Route
           path="/signup"
           element={
-            !isAuthenticated ? (
+            !isClerkSignedIn ? (
               <SignUpPage />
             ) : (
-              <Navigate to={isOnboarded ? "/" : "/onboarding"} />
+              <Navigate to={isAuthenticated && isOnboarded ? "/" : "/onboarding"} />
             )
           }
         />
@@ -59,8 +64,14 @@ const App = () => {
         <Route
           path="/login"
           element={
-            !isAuthenticated ? (
+            !isClerkSignedIn ? (
               <LoginPage />
+            ) : !isAuthenticated ? (
+              <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center">
+                <PageLoader />
+                <p className="mt-4 text-lg font-semibold animate-pulse">Synchronizing your account...</p>
+                <p className="text-sm text-foreground/50">This only takes a moment.</p>
+              </div>
             ) : (
               <Navigate to={
                 location.state?.from?.pathname || (isOnboarded ? "/" : "/onboarding")

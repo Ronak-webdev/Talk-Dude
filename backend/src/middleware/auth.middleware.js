@@ -23,10 +23,12 @@ export const protectRoute = async (req, res, next) => {
 
         if (user) {
           // Link Clerk ID to existing account
+          console.log(`[AUTH SYNC] Linking existing user email ${email} to Clerk ID ${userId}`);
           user.clerkId = userId;
           await user.save();
         } else {
           // Create new user record
+          console.log(`[AUTH SYNC] Creating new user for Clerk ID ${userId} (Email: ${email})`);
           user = await User.create({
             clerkId: userId,
             email,
@@ -34,6 +36,8 @@ export const protectRoute = async (req, res, next) => {
             profilePic: clerkUser.imageUrl || `https://avatar.iran.liara.run/public/${Math.floor(Math.random() * 100) + 1}.png`,
           });
         }
+
+        console.log(`[AUTH SYNC] Success. DB User ID: ${user._id}`);
 
         // Also sync with Stream
         await upsertStreamUser({
