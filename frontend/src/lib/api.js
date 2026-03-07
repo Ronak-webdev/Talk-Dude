@@ -19,7 +19,7 @@ export const logout = async () => {
 export const getAuthUser = async () => {
   try {
     const res = await axiosInstance.get("/auth/me");
-    return res.data;
+    return res.data.user; // Extract user from {success, user}
   } catch (error) {
     if (error.response?.status !== 401) {
       console.log("Error in getAuthUser:", error);
@@ -30,7 +30,7 @@ export const getAuthUser = async () => {
 
 export const completeOnboarding = async (userData) => {
   const response = await axiosInstance.post("/auth/onboarding", userData);
-  return response.data;
+  return response.data.user; // Extract user from {success, user}
 };
 
 export async function getUserFriends() {

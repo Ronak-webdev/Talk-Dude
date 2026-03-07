@@ -5,6 +5,7 @@ import { upsertStreamUser } from "../lib/stream.js";
 export const protectRoute = async (req, res, next) => {
   try {
     const { userId } = getAuth(req);
+    console.log(`[AUTH MIDDLEWARE] Processing request for Clerk ID: ${userId || "None"}`);
 
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized - No Clerk session found" });
@@ -13,10 +14,12 @@ export const protectRoute = async (req, res, next) => {
     let user = await User.findOne({ clerkId: userId }).select("-password");
 
     if (!user) {
+      console.log(`[AUTH SYNC] User with Clerk ID ${userId} not found in DB. Attempting sync...`);
       // Auto-sync: If user exists in Clerk but not in our DB, create them
       try {
         const clerkUser = await clerkClient.users.getUser(userId);
         const email = clerkUser.emailAddresses[0]?.emailAddress;
+        console.log(`[AUTH SYNC] Clerk User Email: ${email}`);
 
         // Check if user exists by email (previous manual account)
         user = await User.findOne({ email }).select("-password");
