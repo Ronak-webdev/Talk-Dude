@@ -5,6 +5,7 @@ import { useClerk } from "@clerk/clerk-react";
 const useLogout = () => {
   const queryClient = useQueryClient();
   const { signOut } = useClerk();
+  console.log("DEBUG: useLogout initialized. VERSION_CHECK: FINAL_LOGOUT_FIX_VER_2");
 
   const {
     mutate: executeLogout,
