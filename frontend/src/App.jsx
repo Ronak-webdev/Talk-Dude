@@ -116,7 +116,6 @@ const App = () => {
           }
         />
 
-        {/* 🔥 FIXED: Allow onboarding page to open even if user is already onboarded */}
         <Route
           path="/onboarding"
           element={
@@ -127,6 +126,12 @@ const App = () => {
             )
           }
         />
+
+        {/* Redirect /sign-in to /login */}
+        <Route path="/sign-in" element={<Navigate to="/login" replace />} />
+
+        {/* Catch-all route for undefined paths */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
       <Toaster />

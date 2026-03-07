@@ -1,16 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthUser from "../hooks/useAuthUser";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { completeOnboarding } from "../lib/api";
-import { LoaderIcon, MapPinIcon, ShipWheelIcon, ShuffleIcon } from "lucide-react";
+import { LoaderIcon, MapPinIcon, ShipWheelIcon, ShuffleIcon, CameraIcon } from "lucide-react";
 import { LANGUAGES } from "../constants";
 
 const OnboardingPage = () => {
   const { authUser } = useAuthUser();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
   const [formState, setFormState] = useState({
     fullName: authUser?.fullName || "",
@@ -21,31 +22,60 @@ const OnboardingPage = () => {
     profilePic: authUser?.profilePic || "",
   });
 
+  // Generate random avatar on mount if none exists
+  useEffect(() => {
+    if (!formState.profilePic && !authUser?.profilePic) {
+      const idx = Math.floor(Math.random() * 1000) + 1;
+      const initialAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${idx}`;
+      setFormState((prev) => ({ ...prev, profilePic: initialAvatar }));
+    }
+  }, [authUser?.profilePic, formState.profilePic]);
+
   const { mutate: onboardingMutation, isPending } = useMutation({
     mutationFn: completeOnboarding,
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success("Profile onboarded successfully");
+      // Update cache immediately so App.jsx redirects to Home
+      queryClient.setQueryData(["authUser"], data);
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
       navigate("/");
     },
 
     onError: (error) => {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
     },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     onboardingMutation(formState);
   };
 
   const handleRandomAvatar = () => {
-    const idx = Math.floor(Math.random() * 1000) + 1; // 1-1000 included
+    const idx = Math.floor(Math.random() * 1000) + 1;
     const randomAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${idx}`;
-
     setFormState({ ...formState, profilePic: randomAvatar });
     toast.success("Random profile picture generated!");
+  };
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("File size should be less than 2MB");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormState({ ...formState, profilePic: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -57,8 +87,10 @@ const OnboardingPage = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* PROFILE PIC CONTAINER */}
             <div className="flex flex-col items-center justify-center space-y-4">
-              {/* IMAGE PREVIEW */}
-              <div className="size-32 rounded-full bg-base-300 overflow-hidden">
+              <div
+                className="size-32 rounded-full bg-base-300 overflow-hidden relative group cursor-pointer border-4 border-primary/20 hover:border-primary transition-all shadow-inner"
+                onClick={handleImageClick}
+              >
                 {formState.profilePic ? (
                   <img
                     src={formState.profilePic}
@@ -70,11 +102,22 @@ const OnboardingPage = () => {
                     <CameraIcon className="size-12 text-base-content opacity-40" />
                   </div>
                 )}
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <CameraIcon className="size-8 text-white" />
+                </div>
               </div>
+
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
 
               {/* Generate Random Avatar BTN */}
               <div className="flex items-center gap-2">
-                <button type="button" onClick={handleRandomAvatar} className="btn btn-accent">
+                <button type="button" onClick={handleRandomAvatar} className="btn btn-accent btn-sm">
                   <ShuffleIcon className="size-4 mr-2" />
                   Generate Random Avatar
                 </button>
@@ -84,29 +127,31 @@ const OnboardingPage = () => {
             {/* FULL NAME */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Full Name</span>
+                <span className="label-text font-semibold">Full Name</span>
               </label>
               <input
                 type="text"
                 name="fullName"
                 value={formState.fullName}
                 onChange={(e) => setFormState({ ...formState, fullName: e.target.value })}
-                className="input input-bordered w-full"
+                className="input input-bordered w-full placeholder:opacity-30 focus:placeholder:opacity-50"
                 placeholder="Your full name"
+                required
               />
             </div>
 
             {/* BIO */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Bio</span>
+                <span className="label-text font-semibold">Bio</span>
               </label>
               <textarea
                 name="bio"
                 value={formState.bio}
                 onChange={(e) => setFormState({ ...formState, bio: e.target.value })}
-                className="textarea textarea-bordered h-24"
+                className="textarea textarea-bordered h-24 placeholder:opacity-30 focus:placeholder:opacity-50"
                 placeholder="Tell others about yourself and your language learning goals"
+                required
               />
             </div>
 
@@ -115,13 +160,14 @@ const OnboardingPage = () => {
               {/* NATIVE LANGUAGE */}
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Native Language</span>
+                  <span className="label-text font-semibold">Native Language</span>
                 </label>
                 <select
                   name="nativeLanguage"
                   value={formState.nativeLanguage}
                   onChange={(e) => setFormState({ ...formState, nativeLanguage: e.target.value })}
                   className="select select-bordered w-full"
+                  required
                 >
                   <option value="">Select your native language</option>
                   {LANGUAGES.map((lang) => (
@@ -135,13 +181,14 @@ const OnboardingPage = () => {
               {/* LEARNING LANGUAGE */}
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Learning Language</span>
+                  <span className="label-text font-semibold">Learning Language</span>
                 </label>
                 <select
                   name="learningLanguage"
                   value={formState.learningLanguage}
                   onChange={(e) => setFormState({ ...formState, learningLanguage: e.target.value })}
                   className="select select-bordered w-full"
+                  required
                 >
                   <option value="">Select language you're learning</option>
                   {LANGUAGES.map((lang) => (
@@ -156,7 +203,7 @@ const OnboardingPage = () => {
             {/* LOCATION */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Location</span>
+                <span className="label-text font-semibold">Location</span>
               </label>
               <div className="relative">
                 <MapPinIcon className="absolute top-1/2 transform -translate-y-1/2 left-3 size-5 text-base-content opacity-70" />
@@ -165,15 +212,15 @@ const OnboardingPage = () => {
                   name="location"
                   value={formState.location}
                   onChange={(e) => setFormState({ ...formState, location: e.target.value })}
-                  className="input input-bordered w-full pl-10"
+                  className="input input-bordered w-full pl-10 placeholder:opacity-30 focus:placeholder:opacity-50"
                   placeholder="City, Country"
+                  required
                 />
               </div>
             </div>
 
             {/* SUBMIT BUTTON */}
-
-            <button className="btn btn-primary w-full" disabled={isPending} type="submit">
+            <button className="btn btn-primary w-full shadow-lg" disabled={isPending} type="submit">
               {!isPending ? (
                 <>
                   <ShipWheelIcon className="size-5 mr-2" />
@@ -182,7 +229,7 @@ const OnboardingPage = () => {
               ) : (
                 <>
                   <LoaderIcon className="animate-spin size-5 mr-2" />
-                  Onboarding...
+                  Updating...
                 </>
               )}
             </button>

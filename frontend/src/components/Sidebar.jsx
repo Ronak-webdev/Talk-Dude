@@ -68,11 +68,6 @@ const Sidebar = () => {
         >
           <UsersIcon className="h-5 w-5 flex-shrink-0" />
           <span className="text-sm md:text-base">Friends</span>
-          {incomingReqs.length > 0 && (
-            <span className="badge badge-sm badge-primary absolute top-2 right-2 size-4 p-0.5 text-[10px]">
-              {incomingReqs.length}
-            </span>
-          )}
         </Link>
 
         <Link

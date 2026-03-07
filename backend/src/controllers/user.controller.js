@@ -138,6 +138,16 @@ export async function acceptFriendRequest(req, res) {
       $addToSet: { friends: friendRequest.sender },
     });
 
+    const recipient = await User.findById(friendRequest.recipient).select("fullName");
+
+    const senderSocketId = getReceiverSocketId(friendRequest.sender);
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("friend_request_accepted", {
+        recipientName: recipient?.fullName || "Someone",
+        id: friendRequest._id,
+      });
+    }
+
     res.status(200).json({ message: "Friend request accepted" });
   } catch (error) {
     console.log("Error in acceptFriendRequest controller", error.message);

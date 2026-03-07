@@ -40,14 +40,7 @@ const Navbar = ({ toggleSidebar, isMobile = false }) => {
 
 
           {/* Show logo in chat page on all devices */}
-          {isChatPage && (
-            <Link to="/" className="hidden md:flex items-center gap-2">
-              <ShipWheelIcon className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
-                TalkDude
-              </span>
-            </Link>
-          )}
+          
         </div>
 
         {/* Right side navigation */}

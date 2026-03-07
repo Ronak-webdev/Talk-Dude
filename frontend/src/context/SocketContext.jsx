@@ -50,6 +50,15 @@ export const SocketContextProvider = ({ children }) => {
                 queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
             });
 
+            newSocket.on("friend_request_accepted", (data) => {
+                audioRef.current.play().catch((err) => console.log("Audio play failed", err));
+                toast.success(`${data.recipientName} accepted your friend request!`, {
+                    icon: '🤝',
+                });
+                queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
+                queryClient.invalidateQueries({ queryKey: ["friends"] });
+            });
+
             return () => {
                 newSocket.close();
                 setSocket(null);

@@ -12,13 +12,14 @@ import {
   MessageInput,
   MessageList,
   Thread,
-  Window,
 } from "stream-chat-react";
 import { StreamChat } from "stream-chat";
 import toast from "react-hot-toast";
 
 import ChatLoader from "../components/ChatLoader";
-import CallButton from "../components/CallButton";
+import CustomChatHeader from "../components/CustomChatHeader";
+import CustomMessageList from "../components/CustomMessageList";
+import CustomMessageInput from "../components/CustomMessageInput";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
@@ -28,6 +29,7 @@ const ChatPage = () => {
   const { chatClient } = useChatContext();
   const [channel, setChannel] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [targetUser, setTargetUser] = useState(null);
 
   const { authUser } = useAuthUser();
 
@@ -41,7 +43,13 @@ const ChatPage = () => {
         members: [authUser._id, targetUserId],
       });
 
-      await currChannel.watch();
+      const state = await currChannel.watch();
+
+      // Get target user info from members
+      const otherMember = Object.values(state.members).find(m => m.user.id !== authUser._id);
+      if (otherMember) {
+        setTargetUser(otherMember.user);
+      }
 
       setChannel(currChannel);
       setLoading(false);
@@ -52,30 +60,74 @@ const ChatPage = () => {
 
   const handleVideoCall = () => {
     if (channel) {
-      const baseUrl = import.meta.env.VITE_CLIENT_URL || window.location.origin;
-      const callUrl = `${baseUrl}/call/${channel.id}`;
+      const callUrl = `${window.location.origin}/call/${channel.id}`;
 
       channel.sendMessage({
-        text: `I've started a video call. Join me here: ${callUrl}`,
+        text: `🎥 I've started a video call. Click here to join: ${callUrl}`,
       });
 
       toast.success("Video call link sent successfully!");
     }
   };
 
+  const handleSendMessage = async (text) => {
+    if (!channel) return;
+    try {
+      await channel.sendMessage({ text });
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast.error("Failed to send message");
+    }
+  };
+
+  const handleSendAudio = async (blob) => {
+    if (!channel || !blob) return;
+
+    try {
+      const filename = `voice-message-${Date.now()}.webm`;
+      const file = new File([blob], filename, { type: "audio/webm" });
+
+      // Upload to Stream CDN
+      const response = await channel.sendFile(file);
+
+      // Send message with audio attachment
+      await channel.sendMessage({
+        attachments: [
+          {
+            type: "audio",
+            asset_url: response.file,
+            title: filename,
+            audio_url: response.file,
+          },
+        ],
+      });
+
+      toast.success("Voice message sent!");
+    } catch (error) {
+      console.error("Error uploading/sending audio:", error);
+      toast.error("Failed to send voice message");
+      throw error;
+    }
+  };
+
   if (loading || !chatClient || !channel) return <ChatLoader />;
 
   return (
-    <div className="h-[93vh]">
+    <div className="h-screen flex flex-col bg-base-200">
       <Chat client={chatClient}>
         <Channel channel={channel}>
-          <div className="w-full relative">
-            <CallButton handleVideoCall={handleVideoCall} />
-            <Window>
-              <ChannelHeader />
-              <MessageList />
-              <MessageInput focus />
-            </Window>
+          <div className="flex-1 flex flex-col min-w-0 bg-base-100 overflow-hidden relative">
+            <CustomChatHeader
+              targetUser={targetUser}
+              onVideoCall={handleVideoCall}
+            />
+
+            <CustomMessageList authUserId={authUser._id} />
+
+            <CustomMessageInput
+              onSendMessage={handleSendMessage}
+              onSendAudio={handleSendAudio}
+            />
           </div>
           <Thread />
         </Channel>
