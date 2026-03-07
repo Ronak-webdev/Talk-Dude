@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { AuthenticateWithRedirectCallback } from "@clerk/clerk-react";
+import { AuthenticateWithRedirectCallback, useUser } from "@clerk/clerk-react";
 
 import HomePage from "./pages/HomePage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
@@ -18,14 +18,16 @@ import Layout from "./components/Layout.jsx";
 import { useThemeStore } from "./store/useThemeStore.js";
 
 const App = () => {
-  const { isLoading, authUser } = useAuthUser();
+  const { isLoaded: isClerkLoaded, isSignedIn: isClerkSignedIn } = useUser();
+  const { isLoading: isSyncLoading, authUser } = useAuthUser();
   const { theme } = useThemeStore();
   const location = useLocation();
 
   const isAuthenticated = Boolean(authUser);
   const isOnboarded = authUser?.isOnboarded;
 
-  if (isLoading) return <PageLoader />;
+  // Show loader if Clerk is still checking session OR if signed in and waiting for backend sync
+  if (!isClerkLoaded || (isClerkSignedIn && isSyncLoading)) return <PageLoader />;
 
   return (
     <div className="h-screen" data-theme={theme}>

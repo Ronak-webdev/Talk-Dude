@@ -87,6 +87,9 @@ const SignUpPage = () => {
                 <input
                   type="email"
                   placeholder="Email address"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck="false"
                   className="w-full pl-12 pr-4 py-4 rounded-2xl glass-dark border border-white/5 focus:border-blue-500/50 transition-all outline-none"
                   value={signupData.email}
                   onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}

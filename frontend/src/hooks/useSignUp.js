@@ -46,7 +46,8 @@ const useSignUpHook = () => {
       }
     },
     onError: (err) => {
-      toast.error(err.message || "Something went wrong");
+      const clerkError = err.clerkError ? err.errors?.[0]?.message : null;
+      toast.error(clerkError || err.message || "Something went wrong");
     },
   });
 
