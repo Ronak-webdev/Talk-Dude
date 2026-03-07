@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logout } from "../lib/api";
+import { useClerk } from "@clerk/clerk-react";
 
 const useLogout = () => {
   const queryClient = useQueryClient();
+  const { signOut } = useClerk();
 
   const {
     mutate: logoutMutation,
@@ -10,7 +12,10 @@ const useLogout = () => {
     error,
   } = useMutation({
     mutationFn: logout,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
+    onSuccess: async () => {
+      await signOut();
+      queryClient.invalidateQueries({ queryKey: ["authUser"] });
+    },
   });
 
   return { logoutMutation, isPending, error };

@@ -23,7 +23,7 @@ const Navbar = ({ toggleSidebar }) => {
   const totalNotifications = incomingReqs.length + (unreadCount || 0);
 
   return (
-    <nav className="glass-dark sticky top-0 z-50 h-20 flex items-center px-4 sm:px-8 transition-all duration-300">
+    <nav className="bg-[#0f111a] border-b border-white/5 sticky top-0 z-50 h-20 flex items-center px-4 sm:px-8 transition-all duration-300">
       <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
         {/* Left side - Menu button and Brand */}
         <div className="flex items-center gap-4">
@@ -77,7 +77,7 @@ const Navbar = ({ toggleSidebar }) => {
                   </div>
                 </div>
               </div>
-              <div tabIndex={0} className="dropdown-content mt-4 z-[100] menu p-3 glass shadow-2xl rounded-3xl w-60 border border-white/5 animate-in fade-in zoom-in slide-in-from-top-4 duration-300">
+              <div tabIndex={0} className="dropdown-content mt-4 z-[100] menu p-3 bg-[#1a1d2e] shadow-2xl rounded-3xl w-60 border border-white/10 animate-in fade-in zoom-in slide-in-from-top-4 duration-300">
                 <div className="px-3 py-2 mb-2">
                   <p className="text-sm font-semibold">{authUser.fullName}</p>
                   <p className="text-xs text-foreground/50 truncate">{authUser.email}</p>

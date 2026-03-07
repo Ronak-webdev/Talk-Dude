@@ -61,11 +61,11 @@ const Layout = ({ children }) => {
         <div className="drawer-side z-50">
           <label
             htmlFor="my-drawer"
-            className="drawer-overlay !bg-black/60 backdrop-blur-sm"
+            className="drawer-overlay !bg-black/40"
             onClick={(e) => e.stopPropagation()}
           ></label>
           <div
-            className="w-72 h-full relative glass-dark border-r border-white/5 shadow-2xl"
+            className="w-72 h-full relative bg-[#0f111a] border-r border-white/5 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <Sidebar />
