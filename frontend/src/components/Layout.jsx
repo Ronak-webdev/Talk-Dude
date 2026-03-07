@@ -41,42 +41,53 @@ const Layout = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-base-100 drawer lg:drawer-open" onClick={handleClickOutside}>
-      <input 
-        id="my-drawer" 
-        type="checkbox" 
-        className="drawer-toggle" 
-        checked={isSidebarOpen}
-        onChange={() => {}} // Controlled by state
-      />
-      
-      {/* Drawer Sidebar */}
-      <div className="drawer-side z-40">
-        <label 
-          htmlFor="my-drawer" 
-          className="drawer-overlay"
-          onClick={(e) => e.stopPropagation()}
-        ></label>
-        <div 
-          className="bg-base-200 w-64 h-full relative"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Sidebar />
-        </div>
+    <div className="min-h-screen bg-background relative overflow-hidden" onClick={handleClickOutside}>
+      {/* Global Background Elements */}
+      <div className="fixed inset-0 pointer-events-none opacity-20 z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600 rounded-full blur-[140px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600 rounded-full blur-[140px]" />
       </div>
-      
-      {/* Main Content */}
-      <div className="drawer-content flex flex-col h-screen overflow-hidden">
-        <Navbar 
-          toggleSidebar={toggleSidebar} 
-          isMobile={isMobile} 
+
+      <div className="drawer lg:drawer-open relative z-10">
+        <input
+          id="my-drawer"
+          type="checkbox"
+          className="drawer-toggle"
+          checked={isSidebarOpen}
+          onChange={() => { }}
         />
-        <main className="flex-1 overflow-y-auto p-2 md:p-4 bg-base-100">
-          {children}
-        </main>
+
+        {/* Drawer Sidebar */}
+        <div className="drawer-side z-50">
+          <label
+            htmlFor="my-drawer"
+            className="drawer-overlay !bg-black/60 backdrop-blur-sm"
+            onClick={(e) => e.stopPropagation()}
+          ></label>
+          <div
+            className="w-72 h-full relative glass-dark border-r border-white/5 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Sidebar />
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="drawer-content flex flex-col h-screen overflow-hidden">
+          <Navbar
+            toggleSidebar={toggleSidebar}
+            isMobile={isMobile}
+          />
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-transparent">
+            <div className="max-w-[1600px] mx-auto h-full">
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );
 };
 
 export default Layout;
+

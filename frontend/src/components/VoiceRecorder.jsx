@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Mic, Square, X, Send, Loader2 } from "lucide-react";
+import { Mic, Square, X, Send, Loader2, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 const VoiceRecorder = ({ onSend, onCancel }) => {
@@ -86,30 +86,44 @@ const VoiceRecorder = ({ onSend, onCancel }) => {
     };
 
     return (
-        <div className="flex items-center gap-3 bg-base-300 p-2 rounded-full px-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <div className="flex items-center gap-3">
             {isRecording ? (
-                <>
-                    <div className="flex items-center gap-2">
-                        <span className="size-3 rounded-full bg-red-500 animate-pulse" />
-                        <span className="text-sm font-mono w-10">{formatTime(recordingTime)}</span>
+                <div className="flex items-center gap-3 glass-dark border border-red-500/20 px-4 py-2 rounded-2xl animate-in zoom-in duration-300">
+                    <div className="flex items-center gap-3">
+                        <div className="relative">
+                            <span className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-25" />
+                            <div className="w-3 h-3 rounded-full bg-red-500 relative z-10" />
+                        </div>
+                        <span className="text-sm font-bold font-mono text-red-500 min-w-[40px]">{formatTime(recordingTime)}</span>
                     </div>
+                    <div className="w-[2px] h-4 bg-white/10" />
                     <button
                         type="button"
                         onClick={stopRecording}
-                        className="btn btn-ghost btn-circle btn-sm text-error"
+                        className="p-1.5 rounded-xl hover:bg-red-500/10 text-red-500 transition-colors"
+                        title="Stop Recording"
                     >
                         <Square className="size-4 fill-current" />
                     </button>
-                </>
+                    <button
+                        type="button"
+                        onClick={handleCancel}
+                        className="p-1.5 rounded-xl hover:bg-white/10 text-white/60 transition-colors"
+                        title="Cancel"
+                    >
+                        <Trash2 className="size-4" />
+                    </button>
+                </div>
             ) : audioBlob ? (
-                <>
-                    <span className="text-sm font-medium">Recording saved ({formatTime(recordingTime)})</span>
-                    <div className="flex gap-1">
+                <div className="flex items-center gap-3 glass-dark border border-blue-500/20 px-4 py-2 rounded-2xl animate-in zoom-in duration-300">
+                    <span className="text-sm font-semibold text-blue-400">Audio Ready ({formatTime(recordingTime)})</span>
+                    <div className="w-[2px] h-4 bg-white/10" />
+                    <div className="flex gap-2">
                         <button
                             type="button"
                             onClick={handleSend}
                             disabled={isUploading}
-                            className="btn btn-primary btn-circle btn-sm"
+                            className="p-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50"
                         >
                             {isUploading ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
                         </button>
@@ -117,29 +131,20 @@ const VoiceRecorder = ({ onSend, onCancel }) => {
                             type="button"
                             onClick={handleCancel}
                             disabled={isUploading}
-                            className="btn btn-ghost btn-circle btn-sm"
+                            className="p-2 rounded-xl hover:bg-white/10 text-white/60 transition-colors"
                         >
                             <X className="size-4" />
                         </button>
                     </div>
-                </>
+                </div>
             ) : (
                 <button
                     type="button"
                     onClick={startRecording}
-                    className="btn btn-circle btn-sm btn-ghost hover:bg-primary/20 hover:text-primary transition-all group"
+                    className="p-3 rounded-2xl glass hover:bg-white/10 text-white transition-all group active:scale-95"
+                    title="Record Voice"
                 >
-                    <Mic className="size-5 group-hover:scale-110" />
-                </button>
-            )}
-
-            {isRecording && (
-                <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="btn btn-ghost btn-circle btn-sm"
-                >
-                    <X className="size-4" />
+                    <Mic className="size-5 group-hover:scale-110 group-hover:text-blue-400 transition-all" />
                 </button>
             )}
         </div>
@@ -147,3 +152,4 @@ const VoiceRecorder = ({ onSend, onCancel }) => {
 };
 
 export default VoiceRecorder;
+

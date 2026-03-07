@@ -113,10 +113,16 @@ const ChatPage = () => {
   if (loading || !chatClient || !channel) return <ChatLoader />;
 
   return (
-    <div className="h-screen flex flex-col bg-base-200">
+    <div className="h-screen flex flex-col bg-background relative overflow-hidden">
+      {/* Background Gradients */}
+      <div className="absolute inset-0 pointer-events-none opacity-10">
+        <div className="absolute top-[10%] left-[-10%] w-[50%] h-[50%] bg-blue-600 rounded-full blur-[140px]" />
+        <div className="absolute bottom-[10%] right-[-10%] w-[50%] h-[50%] bg-purple-600 rounded-full blur-[140px]" />
+      </div>
+
       <Chat client={chatClient}>
         <Channel channel={channel}>
-          <div className="flex-1 flex flex-col min-w-0 bg-base-100 overflow-hidden relative">
+          <div className="flex-1 flex flex-col min-w-0 bg-transparent overflow-hidden relative z-10">
             <CustomChatHeader
               targetUser={targetUser}
               onVideoCall={handleVideoCall}
@@ -136,3 +142,4 @@ const ChatPage = () => {
   );
 };
 export default ChatPage;
+

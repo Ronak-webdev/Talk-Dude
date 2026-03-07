@@ -1,41 +1,56 @@
-import { VideoIcon, Phone } from "lucide-react";
+import { Video, Info, User, ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const CustomChatHeader = ({ targetUser, onVideoCall }) => {
+    const navigate = useNavigate();
+
     return (
-        <div className="flex items-center justify-between px-4 py-3 bg-base-100/80 backdrop-blur-md border-b border-base-300 sticky top-0 z-10">
-            <div className="flex items-center gap-3">
-                <div className="avatar online">
-                    <div className="w-10 h-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
-                        <img
-                            src={targetUser?.image || targetUser?.profilePic || "/default-avatar.png"}
-                            alt={targetUser?.name || "User"}
-                            className="object-cover w-full h-full"
-                        />
+        <div className="flex items-center justify-between px-6 py-4 glass-dark border-b border-white/5 sticky top-0 z-50">
+            <div className="flex items-center gap-4">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="lg:hidden p-2 rounded-xl hover:bg-white/5 transition-colors"
+                >
+                    <ChevronLeft className="size-6" />
+                </button>
+
+                <div className="relative group">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-purple-600 p-[2px] transition-transform group-hover:scale-105">
+                        <div className="w-full h-full rounded-[14px] overflow-hidden bg-background">
+                            <img
+                                src={targetUser?.image || targetUser?.profilePic || "/default-avatar.png"}
+                                alt={targetUser?.name || "User"}
+                                className="object-cover w-full h-full"
+                            />
+                        </div>
                     </div>
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-green-500 border-4 border-background" />
                 </div>
+
                 <div>
-                    <h3 className="font-bold text-base text-base-content leading-tight">
+                    <h3 className="font-bold text-lg text-white leading-tight">
                         {targetUser?.name || targetUser?.fullName || "Chatting..."}
                     </h3>
-                    <p className="text-xs text-success flex items-center gap-1 opacity-80">
+                    <p className="text-xs text-green-500 font-medium flex items-center gap-1.5 mt-0.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                         Online
                     </p>
                 </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
                 <button
                     onClick={onVideoCall}
-                    className="btn btn-ghost btn-circle btn-sm hover:bg-success/20 hover:text-success transition-all duration-300"
+                    className="p-3 rounded-2xl glass hover:bg-white/10 text-white transition-all group"
                     title="Start Video Call"
                 >
-                    <VideoIcon className="size-5" />
+                    <Video className="size-5 group-hover:scale-110 transition-transform" />
                 </button>
                 <button
-                    className="btn btn-ghost btn-circle btn-sm hover:bg-primary/20 hover:text-primary transition-all duration-300"
-                    title="More info"
+                    className="p-3 rounded-2xl glass hover:bg-white/10 text-white transition-all group"
+                    title="User Details"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-5 h-5 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <Info className="size-5 group-hover:scale-110 transition-transform" />
                 </button>
             </div>
         </div>
@@ -43,3 +58,4 @@ const CustomChatHeader = ({ targetUser, onVideoCall }) => {
 };
 
 export default CustomChatHeader;
+

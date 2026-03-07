@@ -1,104 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Base styles for chat container */
+:root {
+  /* Premium Dark Theme Palette (HSL) */
+  --background: 220 33% 3%;
+  --foreground: 210 40% 98%;
+  
+  --primary: 221 83% 53%; /* Electric Blue */
+  --primary-foreground: 210 40% 98%;
+  
+  --secondary: 262 83% 58%; /* Powerful Purple */
+  --secondary-foreground: 210 40% 98%;
+  
+  --accent: 262 83% 58%;
+  --accent-foreground: 210 40% 98%;
+  
+  --card: 220 33% 7%;
+  --card-foreground: 210 40% 98%;
+  
+  --border: 217 19% 27%;
+  --input: 217 19% 27%;
+  
+  --radius: 0.75rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-neutral-950 text-foreground font-['Be_Vietnam_Pro',sans-serif] antialiased;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(221, 83%, 53%, 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(262, 83%, 58%, 0.1) 0px, transparent 50%);
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-xl;
+  }
+  
+  .glass-dark {
+    @apply bg-black/40 backdrop-blur-xl border border-white/5 shadow-2xl;
+  }
+
+  .btn-premium {
+    @apply relative overflow-hidden px-6 py-3 rounded-full font-semibold transition-all duration-300
+           bg-gradient-to-r from-blue-600 to-purple-600 text-white
+           hover:scale-105 hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] active:scale-95;
+  }
+
+  .chat-bubble-user {
+    @apply bg-gradient-to-br from-blue-600 to-blue-500 text-white rounded-2xl rounded-tr-none py-2 px-4 shadow-lg;
+  }
+
+  .chat-bubble-alt {
+    @apply glass-dark text-foreground rounded-2xl rounded-tl-none py-2 px-4;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
+}
+
+/* Stream Chat Overrides for professional look */
 .str-chat__channel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(to bottom, #c9e8c9, #b7e7bb);
-  height: 100%;
-  width: 100%;
-  padding: 0;
-  margin: 0;
+  @apply bg-transparent !important;
 }
 
 .str-chat__container {
-  max-width: 100%;
-  width: 100%;
-  height: 100% !important;
-  margin: 0 !important;
-  border-radius: 0;
-  box-shadow: none;
-  overflow: hidden;
+  @apply !bg-transparent !border-none !shadow-none;
 }
 
-/* Message list styles */
 .str-chat__list {
-  background-color: #ffffff;
-  padding: 0.5rem;
-  height: 100%;
-  overflow-y: auto;
+  @apply !bg-transparent !p-4;
 }
 
-/* Hide notifications in the chat list */
-.str-chat__list-notifications {
-  display: none;
-}
-
-/* Message input area */
 .str-chat__message-input {
-  border-top: 1px solid #e5e7eb;
-  padding: 0.75rem;
-  background-color: #ffffff;
+  @apply !bg-transparent !border-t !border-white/5 !p-4;
 }
 
-/* Message input textarea */
 .str-chat__message-textarea-container textarea {
-  min-height: 40px !important;
-  max-height: 120px !important;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
-  resize: none;
+  @apply !bg-white/5 !backdrop-blur-md !border !border-white/10 !text-white !rounded-xl !p-3;
 }
 
-/* Message bubbles */
-.str-chat__message {
-  margin-bottom: 0.75rem;
-}
-
-.str-chat__message-simple {
-  max-width: 90%;
-}
-
-/* Message actions */
-.str-chat__message-actions {
-  display: none;
-}
-
-.str-chat__message:hover .str-chat__message-actions {
-  display: flex;
-}
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
-  .str-chat__container {
-    border-radius: 0;
-  }
-  
-  .str-chat__message-input {
-    padding: 0.5rem;
-  }
-  
-  .str-chat__message-textarea-container textarea {
-    font-size: 1rem;
-  }
-  
-  .str-chat__message-simple {
-    max-width: 95%;
-  }
-}
-
-/* Very small screens */
-@media (max-width: 390px) {
-  .str-chat__message-textarea-container textarea {
-    font-size: 0.9375rem;
-    padding: 0.4rem;
-  }
-  
-  .str-chat__message-actions {
-    display: none !important;
-  }
-}

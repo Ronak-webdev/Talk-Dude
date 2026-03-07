@@ -11,14 +11,16 @@ import {
   MapPinIcon,
   UserPlusIcon,
   XCircleIcon,
+  Sparkles,
+  Search,
 } from "lucide-react";
 import { getLanguageFlag } from "../components/FriendCard";
 import { capitialize } from "../lib/utils";
+
 const HomePage = () => {
   const queryClient = useQueryClient();
-  
   const [outgoingRequestsIds, setOutgoingRequestsIds] = useState(new Set());
-  
+
   const { data: recommendedUsers = [], isLoading: loadingUsers } = useQuery({
     queryKey: ["users"],
     queryFn: getRecommendedUsers,
@@ -57,41 +59,73 @@ const HomePage = () => {
   }, [outgoingFriendReqs]);
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      <div className="container mx-auto space-y-10">
-        {outgoingFriendReqs && outgoingFriendReqs.length > 0 && (
-          <section>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-6">
-              Outgoing Friend Requests
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {outgoingFriendReqs.map((req) => (
-                <div
-                  key={req._id}
-                  className="card bg-base-200 hover:shadow-lg transition-all duration-300"
-                >
-                  <div className="card-body p-5 space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="avatar size-16 rounded-full">
-                        <img
-                          src={req.recipient.profilePic}
-                          alt={req.recipient.fullName}
-                        />
-                      </div>
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden pt-20 pb-12 sm:pt-32 sm:pb-16 px-6 sm:px-12 max-w-7xl mx-auto">
+        <div className="relative z-10 text-center space-y-8 max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-white/10 text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <Sparkles className="h-4 w-4 text-blue-400" />
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Discover your next language partner
+            </span>
+          </div>
 
+          <h1 className="text-5xl sm:text-7xl font-bold tracking-tight text-white animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
+            Conversations, <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Elevating.</span>
+          </h1>
+
+          <p className="text-lg sm:text-xl text-foreground/60 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+            Connect with learners worldwide and master languages through authentic daily interaction.
+          </p>
+
+          <div className="relative max-w-md mx-auto animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300">
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-foreground/40" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search by language or location..."
+              className="w-full pl-12 pr-4 py-4 rounded-2xl glass-dark border border-white/10 focus:border-blue-500 transition-all outline-none text-white shadow-2xl"
+            />
+          </div>
+        </div>
+
+        {/* Decorative background elements */}
+        <div className="absolute top-0 -left-20 w-96 h-96 bg-blue-600/20 blur-[120px] rounded-full" />
+        <div className="absolute bottom-0 -right-20 w-96 h-96 bg-purple-600/20 blur-[120px] rounded-full" />
+      </section>
+
+      <div className="max-w-7xl mx-auto px-6 sm:px-12 space-y-16 pb-20">
+        {/* Outgoing Requests */}
+        {outgoingFriendReqs && outgoingFriendReqs.length > 0 && (
+          <section className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-400">
+            <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
+              Pending Connections
+              <span className="text-xs font-medium px-2 py-1 rounded-full bg-white/5 border border-white/10">
+                {outgoingFriendReqs.length}
+              </span>
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {outgoingFriendReqs.map((req) => (
+                <div key={req._id} className="glass-dark group hover:border-white/20 transition-all duration-300 rounded-3xl overflow-hidden shadow-xl">
+                  <div className="p-6 space-y-6">
+                    <div className="flex items-center gap-4">
+                      <div className="relative shrink-0">
+                        <div className="w-16 h-16 rounded-2xl p-[2px] bg-gradient-to-tr from-blue-600 to-white/10">
+                          <img src={req.recipient.profilePic} className="w-full h-full rounded-[14px] object-cover bg-neutral-900" alt="" />
+                        </div>
+                      </div>
                       <div>
-                        <h3 className="font-semibold text-lg">
-                          {req.recipient.fullName}
-                        </h3>
+                        <h3 className="font-bold text-lg group-hover:text-blue-400 transition-colors">{req.recipient.fullName}</h3>
+                        <p className="text-xs text-foreground/50">Request sent recently</p>
                       </div>
                     </div>
-
                     <button
-                      className="btn btn-sm btn-error w-full mt-2"
+                      className="w-full py-3 rounded-2xl bg-white/5 hover:bg-red-500/10 text-red-400 text-sm font-semibold transition-all border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2"
                       onClick={() => cancelRequestMutation(req._id)}
                       disabled={isCancelling}
                     >
-                      <XCircleIcon className="size-4 mr-2" />
+                      <XCircleIcon className="size-4" />
                       Cancel Request
                     </button>
                   </div>
@@ -101,96 +135,75 @@ const HomePage = () => {
           </section>
         )}
 
-        <section>
-          <div className="mb-6 sm:mb-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-                  Meet New Learners
-                </h2>
-                <p className="opacity-70">
-                  Discover perfect language exchange partners based on your
-                  profile
-                </p>
-              </div>
-            </div>
+        {/* Recommended Users */}
+        <section className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold">Meet New Learners</h2>
           </div>
 
           {loadingUsers ? (
-            <div className="flex justify-center py-12">
-              <span className="loading loading-spinner loading-lg" />
+            <div className="flex flex-col items-center justify-center py-24 space-y-4">
+              <span className="loading loading-spinner loading-lg text-blue-500" />
+              <p className="text-foreground/40 animate-pulse">Finding connections...</p>
             </div>
           ) : recommendedUsers.length === 0 ? (
-            <div className="card bg-base-200 p-6 text-center">
-              <h3 className="font-semibold text-lg mb-2">
-                No recommendations available
-              </h3>
-              <p className="text-base-content opacity-70">
-                Check back later for new language partners!
-              </p>
+            <div className="glass-dark p-12 text-center rounded-3xl border border-white/5">
+              <h3 className="font-bold text-xl mb-4">No recommendations available</h3>
+              <p className="text-foreground/50">Check back later for new language partners!</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {recommendedUsers.map((user) => {
                 const hasRequestBeenSent = outgoingRequestsIds.has(user._id);
-
                 return (
-                  <div
-                    key={user._id}
-                    className="card bg-base-200 hover:shadow-lg transition-all duration-300"
-                  >
-                    <div className="card-body p-5 space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="avatar size-16 rounded-full">
-                          <img src={user.profilePic} alt={user.fullName} />
-                        </div>
-
-                        <div>
-                          <h3 className="font-semibold text-lg">
-                            {user.fullName}
-                          </h3>
-                          {user.location && (
-                            <div className="flex items-center text-xs opacity-70 mt-1">
-                              <MapPinIcon className="size-3 mr-1" />
-                              {user.location}
-                            </div>
-                          )}
+                  <div key={user._id} className="glass-dark group hover:border-white/20 transition-all duration-500 rounded-3xl overflow-hidden shadow-2xl hover:-translate-y-2">
+                    <div className="relative h-2 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="p-6 space-y-6">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="w-16 h-16 rounded-2xl p-[2px] bg-gradient-to-tr from-blue-600 to-white/10">
+                            <img src={user.profilePic} className="w-full h-full rounded-[14px] object-cover bg-neutral-900" alt="" />
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-lg">{user.fullName}</h3>
+                            {user.location && (
+                              <div className="flex items-center text-xs text-foreground/50 mt-1">
+                                <MapPinIcon className="size-3 mr-1" />
+                                {user.location}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
 
-                      {/* Languages with flags */}
-                      <div className="flex flex-wrap gap-1.5">
-                        <span className="badge badge-secondary">
-                          {getLanguageFlag(user.nativeLanguage)}
-                          Native: {capitialize(user.nativeLanguage)}
-                        </span>
-                        <span className="badge badge-outline">
-                          {getLanguageFlag(user.learningLanguage)}
-                          Learning: {capitialize(user.learningLanguage)}
-                        </span>
+                      <div className="flex flex-wrap gap-2">
+                        <div className="px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-[10px] font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+                          {getLanguageFlag(user.nativeLanguage)} Native: {user.nativeLanguage}
+                        </div>
+                        <div className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-wider text-white/50 flex items-center gap-1.5">
+                          {getLanguageFlag(user.learningLanguage)} Learning: {user.learningLanguage}
+                        </div>
                       </div>
 
-                      {user.bio && (
-                        <p className="text-sm opacity-70">{user.bio}</p>
-                      )}
+                      {user.bio && <p className="text-sm text-foreground/60 leading-relaxed line-clamp-2">{user.bio}</p>}
 
-                      {/* Action button */}
                       <button
-                        className={`btn w-full mt-2 ${
-                          hasRequestBeenSent ? "btn-disabled" : "btn-primary"
-                        } `}
+                        className={`w-full py-4 rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${hasRequestBeenSent
+                            ? "bg-white/5 text-foreground/40 cursor-not-allowed border border-white/5"
+                            : "btn-premium shadow-lg shadow-blue-500/20"
+                          }`}
                         onClick={() => sendRequestMutation(user._id)}
                         disabled={hasRequestBeenSent || isPending}
                       >
                         {hasRequestBeenSent ? (
                           <>
-                            <CheckCircleIcon className="size-4 mr-2" />
-                            Request Sent
+                            <CheckCircleIcon className="size-4" />
+                            Connected
                           </>
                         ) : (
                           <>
-                            <UserPlusIcon className="size-4 mr-2" />
-                            Send Friend Request
+                            <UserPlusIcon className="size-4" />
+                            Send Request
                           </>
                         )}
                       </button>
@@ -207,3 +220,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
