@@ -8,22 +8,24 @@
   /* Premium Dark Theme Palette (HSL) */
   --background: 220 33% 3%;
   --foreground: 210 40% 98%;
-  
-  --primary: 221 83% 53%; /* Electric Blue */
+
+  --primary: 221 83% 53%;
+  /* Electric Blue */
   --primary-foreground: 210 40% 98%;
-  
-  --secondary: 262 83% 58%; /* Powerful Purple */
+
+  --secondary: 262 83% 58%;
+  /* Powerful Purple */
   --secondary-foreground: 210 40% 98%;
-  
+
   --accent: 262 83% 58%;
   --accent-foreground: 210 40% 98%;
-  
+
   --card: 220 33% 7%;
   --card-foreground: 210 40% 98%;
-  
+
   --border: 217 19% 27%;
   --input: 217 19% 27%;
-  
+
   --radius: 0.75rem;
 }
 
@@ -31,9 +33,10 @@
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-neutral-950 text-foreground font-['Be_Vietnam_Pro',sans-serif] antialiased;
-    background-image: 
+    @apply bg-neutral-950 text-foreground font-['Be_Vietnam_Pro', sans-serif] antialiased;
+    background-image:
       radial-gradient(at 0% 0%, hsla(221, 83%, 53%, 0.1) 0px, transparent 50%),
       radial-gradient(at 100% 100%, hsla(262, 83%, 58%, 0.1) 0px, transparent 50%);
     min-height: 100vh;
@@ -42,17 +45,15 @@
 
 @layer components {
   .glass {
-    @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-xl;
+    @apply bg-[#1a1d2e] border border-white/20 shadow-xl;
   }
-  
+
   .glass-dark {
-    @apply bg-black/40 backdrop-blur-xl border border-white/5 shadow-2xl;
+    @apply bg-[#0f111a] border border-white/10 shadow-2xl;
   }
 
   .btn-premium {
-    @apply relative overflow-hidden px-6 py-3 rounded-full font-semibold transition-all duration-300
-           bg-gradient-to-r from-blue-600 to-purple-600 text-white
-           hover:scale-105 hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] active:scale-95;
+    @apply relative overflow-hidden px-6 py-3 rounded-full font-semibold transition-all duration-300 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:scale-105 hover:shadow-[0_0_20px_rgba(79, 70, 229, 0.5)] active:scale-95;
   }
 
   .chat-bubble-user {
@@ -68,9 +69,11 @@
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   @apply bg-transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
 }
@@ -95,4 +98,3 @@
 .str-chat__message-textarea-container textarea {
   @apply !bg-white/5 !backdrop-blur-md !border !border-white/10 !text-white !rounded-xl !p-3;
 }
-

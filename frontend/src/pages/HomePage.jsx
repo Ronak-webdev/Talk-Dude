@@ -62,30 +62,30 @@ const HomePage = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-20 pb-12 sm:pt-32 sm:pb-16 px-6 sm:px-12 max-w-7xl mx-auto">
-        <div className="relative z-10 text-center space-y-8 max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-white/10 text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="relative z-10 text-center space-y-8 max-w-4xl mx-auto text-white">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1a1d2e] border border-white/20 text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Sparkles className="h-4 w-4 text-blue-400" />
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               Discover your next language partner
             </span>
           </div>
 
-          <h1 className="text-4xl sm:text-7xl font-bold tracking-tight text-white animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
+          <h1 className="text-3xl sm:text-7xl font-bold tracking-tight text-white animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 leading-tight">
             Conversations, <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Elevating.</span>
           </h1>
 
-          <p className="text-base sm:text-xl text-foreground/60 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+          <p className="text-base sm:text-xl text-white/80 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
             Connect with learners worldwide and master languages through authentic daily interaction.
           </p>
 
           <div className="relative max-w-md mx-auto animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300">
             <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-foreground/40" />
+              <Search className="h-5 w-5 text-white/40" />
             </div>
             <input
               type="text"
               placeholder="Search by language or location..."
-              className="w-full pl-12 pr-4 py-4 rounded-2xl glass-dark border border-white/10 focus:border-blue-500 transition-all outline-none text-white shadow-2xl"
+              className="w-full pl-12 pr-4 py-4 rounded-2xl bg-[#0f111a] border border-white/10 focus:border-blue-500 transition-all outline-none text-white shadow-2xl"
             />
           </div>
         </div>
@@ -156,7 +156,7 @@ const HomePage = () => {
               {recommendedUsers.map((user) => {
                 const hasRequestBeenSent = outgoingRequestsIds.has(user._id);
                 return (
-                  <div key={user._id} className="glass-dark group hover:border-white/20 transition-all duration-500 rounded-3xl overflow-hidden shadow-2xl hover:-translate-y-2">
+                  <div key={user._id} className="bg-[#0f111a] border border-white/10 group hover:border-white/20 transition-all duration-500 rounded-3xl overflow-hidden shadow-2xl hover:-translate-y-2">
                     <div className="relative h-2 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="p-6 space-y-6">
                       <div className="flex items-start justify-between">
