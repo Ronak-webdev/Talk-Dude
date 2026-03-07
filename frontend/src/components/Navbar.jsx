@@ -9,6 +9,7 @@ import { useChatContext } from "../context/ChatContext";
 const Navbar = ({ toggleSidebar }) => {
   const { authUser } = useAuthUser();
   const { executeLogout } = useLogout();
+  console.log("DEBUG: Navbar using executeLogout. VERSION_CHECK: FINAL_LOGOUT_FIX_VER_2");
   console.log("[NAVBAR] executeLogout defined:", !!executeLogout);
   const location = useLocation();
 

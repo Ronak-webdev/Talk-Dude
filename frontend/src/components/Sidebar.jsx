@@ -9,6 +9,7 @@ import useLogout from "../hooks/useLogout";
 const Sidebar = () => {
   const { authUser } = useAuthUser();
   const { executeLogout } = useLogout();
+  console.log("DEBUG: Sidebar using executeLogout. VERSION_CHECK: FINAL_LOGOUT_FIX_VER_2");
   console.log("[SIDEBAR] executeLogout defined:", !!executeLogout);
   const location = useLocation();
   const currentPath = location.pathname;
