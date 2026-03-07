@@ -57,6 +57,19 @@ const Layout = ({ children }) => {
           onChange={() => { }}
         />
 
+        {/* Main Content */}
+        <div className="drawer-content flex flex-col h-screen overflow-hidden">
+          <Navbar
+            toggleSidebar={toggleSidebar}
+            isMobile={isMobile}
+          />
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-transparent h-full">
+            <div className="max-w-[1600px] mx-auto h-full">
+              {children}
+            </div>
+          </main>
+        </div>
+
         {/* Drawer Sidebar */}
         <div className="drawer-side z-50">
           <label
@@ -70,19 +83,6 @@ const Layout = ({ children }) => {
           >
             <Sidebar />
           </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="drawer-content flex flex-col h-screen overflow-hidden">
-          <Navbar
-            toggleSidebar={toggleSidebar}
-            isMobile={isMobile}
-          />
-          <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-transparent">
-            <div className="max-w-[1600px] mx-auto h-full">
-              {children}
-            </div>
-          </main>
         </div>
       </div>
     </div>

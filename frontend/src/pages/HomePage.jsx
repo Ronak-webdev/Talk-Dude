@@ -70,11 +70,11 @@ const HomePage = () => {
             </span>
           </div>
 
-          <h1 className="text-5xl sm:text-7xl font-bold tracking-tight text-white animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
+          <h1 className="text-4xl sm:text-7xl font-bold tracking-tight text-white animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
             Conversations, <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Elevating.</span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-foreground/60 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+          <p className="text-base sm:text-xl text-foreground/60 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
             Connect with learners worldwide and master languages through authentic daily interaction.
           </p>
 
@@ -189,8 +189,8 @@ const HomePage = () => {
 
                       <button
                         className={`w-full py-4 rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${hasRequestBeenSent
-                            ? "bg-white/5 text-foreground/40 cursor-not-allowed border border-white/5"
-                            : "btn-premium shadow-lg shadow-blue-500/20"
+                          ? "bg-white/5 text-foreground/40 cursor-not-allowed border border-white/5"
+                          : "btn-premium shadow-lg shadow-blue-500/20"
                           }`}
                         onClick={() => sendRequestMutation(user._id)}
                         disabled={hasRequestBeenSent || isPending}
