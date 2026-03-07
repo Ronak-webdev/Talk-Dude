@@ -15,40 +15,35 @@ const useSignUpHook = () => {
       const [firstName, ...lastNameParts] = fullName.split(" ");
       const lastName = lastNameParts.join(" ");
 
-      await signUp.create({
+      const result = await signUp.create({
         emailAddress: email,
         password,
         firstName,
         lastName,
       });
 
-      // Send the user an email verification code (Optional, depends on Clerk settings)
-      // For now, let's assume immediate completion for simplicity or handle as needed
-      // Most Clerk setups require email verification.
-
-      // If no verification is needed:
-      // if (result.status === "complete") {
-      //   await setActive({ session: result.createdSessionId });
-      // }
-
-      // Since we want a smooth flow, let's assume we redirect to a verification page if needed
-      // or just complete if settings allow.
-
-      // For the sake of this task, let's just trigger the create and let Clerk handle the next step.
-      // If the result is 'complete', we set active.
-      const result = await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-
-      // Normally we would need a separate UI for verification code.
-      // To keep it simple and match "original design", we'll just redirect to onboarding
-      // once Clerk session is active.
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        return { status: "complete" };
+      } else if (result.status === "missing_requirements") {
+        // Handle missing requirements if any (e.g. email verification)
+        await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+        return { status: "verification_required" };
+      }
 
       return result;
     },
-    onSuccess: () => {
-      toast.success("Account created! Please check your email.");
-      // For now we navigate to login to complete verification if needed, 
-      // or to onboarding if verified.
-      navigate("/onboarding");
+    onSuccess: (result) => {
+      if (result.status === "verification_required") {
+        toast.success("Please check your email for verification code.");
+        // In a real app we'd show a verification UI. 
+        // For now, redirecting to login as Clerk will handle the flow there if session is incomplete.
+        navigate("/login");
+      } else {
+        toast.success("Account created successfully!");
+        queryClient.invalidateQueries({ queryKey: ["authUser"] });
+        navigate("/onboarding");
+      }
     },
     onError: (err) => {
       toast.error(err.message || "Something went wrong");

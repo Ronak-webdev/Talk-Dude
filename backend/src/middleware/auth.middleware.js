@@ -52,11 +52,19 @@ export const protectRoute = async (req, res, next) => {
     next();
 
   } catch (error) {
-    console.error("CRITICAL error in protectRoute middleware:", error);
-    // Log details if it's a Clerk error
+    console.error("!!! AUTH MIDDLEWARE ERROR !!!");
+    console.error("Method:", req.method, "Path:", req.path);
+    console.error("Error Message:", error.message);
+
     if (error.clerk_error) {
-      console.error("Clerk Error Data:", JSON.stringify(error, null, 2));
+      console.error("Clerk Error Context:", JSON.stringify(error, null, 2));
+    } else {
+      console.error("Stack Trace:", error.stack);
     }
-    return res.status(500).json({ message: "Internal Server Error", details: error.message });
+
+    return res.status(500).json({
+      message: "Internal Server Error during auth sync",
+      details: error.message
+    });
   }
 };
