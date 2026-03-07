@@ -28,6 +28,7 @@ const allowedOrigins = [
   "https://talk-dude-2.onrender.com",
   "https://talk-dude-3.onrender.com",
   "https://talk-dude-4.onrender.com",
+  "https://talk-dude.onrender.com",
   "http://192.168.1.9:5173",
   "http://192.168.117.32:5173"
 ];

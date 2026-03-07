@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { AuthenticateWithRedirectCallback } from "@clerk/clerk-react";
 
 import HomePage from "./pages/HomePage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
@@ -129,6 +130,8 @@ const App = () => {
 
         {/* Redirect /sign-in to /login */}
         <Route path="/sign-in" element={<Navigate to="/login" replace />} />
+
+        <Route path="/sso-callback" element={<AuthenticateWithRedirectCallback />} />
 
         {/* Catch-all route for undefined paths */}
         <Route path="*" element={<Navigate to="/" replace />} />

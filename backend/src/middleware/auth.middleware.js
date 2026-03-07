@@ -52,7 +52,11 @@ export const protectRoute = async (req, res, next) => {
     next();
 
   } catch (error) {
-    console.log("Error in protectRoute middleware", error);
-    return res.status(401).json({ message: "Unauthorized" });
+    console.error("CRITICAL error in protectRoute middleware:", error);
+    // Log details if it's a Clerk error
+    if (error.clerk_error) {
+      console.error("Clerk Error Data:", JSON.stringify(error, null, 2));
+    }
+    return res.status(500).json({ message: "Internal Server Error", details: error.message });
   }
 };
