@@ -4,9 +4,11 @@ import { Bell, Home, MessageSquare, Users, X, Settings, LogOut } from "lucide-re
 import { useQuery } from "@tanstack/react-query";
 import { getFriendRequests } from "../lib/api";
 import { useChatContext } from "../context/ChatContext";
+import useLogout from "../hooks/useLogout";
 
 const Sidebar = () => {
   const { authUser } = useAuthUser();
+  const { logoutMutation } = useLogout();
   const location = useLocation();
   const currentPath = location.pathname;
 
