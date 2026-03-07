@@ -7,7 +7,7 @@ const useLogout = () => {
   const { signOut } = useClerk();
 
   const {
-    mutate: logoutMutation,
+    mutate: executeLogout,
     isPending,
     error,
   } = useMutation({
@@ -18,6 +18,6 @@ const useLogout = () => {
     },
   });
 
-  return { logoutMutation, isPending, error };
+  return { executeLogout, isPending, error };
 };
 export default useLogout;

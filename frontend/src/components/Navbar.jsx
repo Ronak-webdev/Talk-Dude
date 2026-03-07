@@ -8,8 +8,9 @@ import { useChatContext } from "../context/ChatContext";
 
 const Navbar = ({ toggleSidebar }) => {
   const { authUser } = useAuthUser();
+  const { executeLogout } = useLogout();
+  console.log("[NAVBAR] executeLogout defined:", !!executeLogout);
   const location = useLocation();
-  const { logoutMutation } = useLogout();
 
   const { data: friendRequests } = useQuery({
     queryKey: ["friendRequests"],
@@ -85,7 +86,7 @@ const Navbar = ({ toggleSidebar }) => {
                 <div className="h-px bg-white/5 mx-2 mb-2" />
                 <li>
                   <button
-                    onClick={logoutMutation}
+                    onClick={() => executeLogout()}
                     className="flex items-center justify-between p-3 rounded-2xl hover:bg-white/10 text-red-400 hover:text-red-300 transition-colors"
                   >
                     Logout

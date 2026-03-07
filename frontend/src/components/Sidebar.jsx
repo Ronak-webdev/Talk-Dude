@@ -8,7 +8,8 @@ import useLogout from "../hooks/useLogout";
 
 const Sidebar = () => {
   const { authUser } = useAuthUser();
-  const { logoutMutation } = useLogout();
+  const { executeLogout } = useLogout();
+  console.log("[SIDEBAR] executeLogout defined:", !!executeLogout);
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -106,7 +107,7 @@ const Sidebar = () => {
         </Link>
 
         <button
-          onClick={logoutMutation}
+          onClick={() => executeLogout()}
           className="flex items-center gap-4 p-3 rounded-2xl hover:bg-red-500/10 text-red-400/70 hover:text-red-400 transition-all group w-full"
         >
           <LogOut className="size-5 transition-transform group-hover:rotate-12" />
