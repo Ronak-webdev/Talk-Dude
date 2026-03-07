@@ -100,10 +100,10 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center relative z-20">
               <button
                 onClick={() => loginWithSocial("oauth_google")}
-                className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl glass-dark border border-white/10 hover:bg-white/5 transition-all group/btn"
+                className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl glass-dark border border-white/10 hover:bg-white/5 active:scale-[0.98] transition-all duration-200 group/btn shadow-xl shadow-blue-500/5"
               >
                 <Chrome className="h-6 w-6 text-[#4285F4] transition-transform group-hover/btn:scale-110" />
                 <span className="font-semibold text-lg">Continue with Google</span>
