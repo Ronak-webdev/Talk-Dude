@@ -78,7 +78,7 @@ const Sidebar = () => {
       </nav>
 
       {/* User Profile */}
-      <div className="mt-auto pt-6 border-t border-white/5">
+      <div className="mt-auto pt-6 border-t border-white/5 space-y-2">
         <Link
           to="/onboarding"
           className="flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-all group"
@@ -102,6 +102,14 @@ const Sidebar = () => {
           </div>
           <Settings className="size-4 text-white/30 group-hover:text-white transition-colors" />
         </Link>
+
+        <button
+          onClick={logoutMutation}
+          className="flex items-center gap-4 p-3 rounded-2xl hover:bg-red-500/10 text-red-400/70 hover:text-red-400 transition-all group w-full"
+        >
+          <LogOut className="size-5 transition-transform group-hover:rotate-12" />
+          <span className="font-bold text-[15px]">Sign Out</span>
+        </button>
       </div>
     </aside>
   );
