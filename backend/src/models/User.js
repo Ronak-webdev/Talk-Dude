@@ -12,9 +12,14 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    clerkId: {
+      type: String,
+      unique: true,
+      sparse: true, // Only for Clerk users
+    },
     password: {
       type: String,
-      required: true,
+      required: false, // Optional for Clerk users
       minlength: 6,
     },
     bio: {

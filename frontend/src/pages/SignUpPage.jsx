@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MessageSquare, Mail, Lock, User, UserPlus, Github, Chrome } from "lucide-react";
+import { MessageSquare, Mail, Lock, User, UserPlus, Chrome } from "lucide-react";
 import { Link } from "react-router-dom";
 import useSignUp from "../hooks/useSignUp";
 
@@ -10,7 +10,7 @@ const SignUpPage = () => {
     password: "",
   });
 
-  const { isPending, error, signupMutation } = useSignUp();
+  const { isPending, error, signupMutation, signupWithSocial } = useSignUp();
 
   const handleSignup = (e) => {
     e.preventDefault();
@@ -136,14 +136,13 @@ const SignUpPage = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <button className="flex items-center justify-center gap-2 py-3 rounded-2xl glass-dark border border-white/5 hover:bg-white/5 transition-all">
-                <Chrome className="h-5 w-5" />
-                <span className="text-sm font-medium">Google</span>
-              </button>
-              <button className="flex items-center justify-center gap-2 py-3 rounded-2xl glass-dark border border-white/5 hover:bg-white/5 transition-all">
-                <Github className="h-5 w-5" />
-                <span className="text-sm font-medium">Github</span>
+            <div className="flex justify-center">
+              <button
+                onClick={() => signupWithSocial("oauth_google")}
+                className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl glass-dark border border-white/10 hover:bg-white/5 transition-all group/btn"
+              >
+                <Chrome className="h-6 w-6 text-[#4285F4] transition-transform group-hover/btn:scale-110" />
+                <span className="font-semibold text-lg">Sign up with Google</span>
               </button>
             </div>
           </div>
@@ -167,4 +166,3 @@ const SignUpPage = () => {
 };
 
 export default SignUpPage;
-

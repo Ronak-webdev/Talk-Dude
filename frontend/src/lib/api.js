@@ -1,4 +1,6 @@
-import { axiosInstance } from "./axios";
+import { axiosInstance, setAuthToken } from "./axios";
+
+export { setAuthToken };
 
 export const signup = async (signupData) => {
   const response = await axiosInstance.post("/auth/signup", signupData);

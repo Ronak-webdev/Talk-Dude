@@ -75,8 +75,11 @@ app.use((req, res, next) => {
   next();
 });
 
+import { clerkMiddleware } from "@clerk/express";
+
 app.use(express.json());
 app.use(cookieParser());
+app.use(clerkMiddleware());
 
 // ROUTES
 app.use("/api/auth", authRoutes);

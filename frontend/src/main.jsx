@@ -11,18 +11,29 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SocketContextProvider } from "./context/SocketContext.jsx";
 import { ChatContextProvider } from "./context/ChatContext.jsx";
 
+import { ClerkProvider } from "@clerk/clerk-react";
+
+// Import your publishable key
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+if (!PUBLISHABLE_KEY) {
+  throw new Error("Missing Publishable Key");
+}
+
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <SocketContextProvider>
-          <ChatContextProvider>
-            <App />
-          </ChatContextProvider>
-        </SocketContextProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
+    <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <SocketContextProvider>
+            <ChatContextProvider>
+              <App />
+            </ChatContextProvider>
+          </SocketContextProvider>
+        </QueryClientProvider>
+      </BrowserRouter>
+    </ClerkProvider>
   </StrictMode>
 );
