@@ -28,7 +28,7 @@ const LoginPage = () => {
                 <MessageSquare className="h-10 w-10 text-white" />
               </div>
               <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-                Welcome Back - NEW
+                Welcome Back
               </h1>
               <p className="text-foreground/50">Continue your language journey with TalkDude</p>
             </div>
