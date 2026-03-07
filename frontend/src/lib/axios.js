@@ -1,9 +1,16 @@
 import axios from "axios";
 
 // Set the base URL for API requests
-const BASE_URL = import.meta.env.MODE === "development"
-  ? `http://${window.location.hostname}:5001/api`
-  : (import.meta.env.VITE_BACKEND_URL || "https://talk-dude-2.onrender.com/api");
+const getBaseUrl = () => {
+  let url = import.meta.env.MODE === "development"
+    ? `http://${window.location.hostname}:5001`
+    : (import.meta.env.VITE_BACKEND_URL || "https://talk-dude-2.onrender.com");
+
+  // Ensure the URL ends with /api
+  return url.endsWith("/api") ? url : `${url.replace(/\/$/, "")}/api`;
+};
+
+const BASE_URL = getBaseUrl();
 
 console.log("Using API base URL:", BASE_URL);
 
