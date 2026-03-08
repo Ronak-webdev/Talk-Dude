@@ -20,6 +20,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import { capitialize } from "../lib/utils";
+import { getLanguageFlag } from "../components/FriendCard";
 
 const HomePage = () => {
   const { authUser } = useAuthUser();
