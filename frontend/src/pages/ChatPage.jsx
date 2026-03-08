@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import useAuthUser from "../hooks/useAuthUser";
 import { useQuery } from "@tanstack/react-query";
 import { getStreamToken } from "../lib/api";
@@ -28,6 +28,7 @@ const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
 const ChatPage = () => {
   const { id: targetUserId } = useParams();
+  const navigate = useNavigate();
 
   const { chatClient } = useChatContext();
   const [channel, setChannel] = useState(null);
@@ -86,15 +87,28 @@ const ChatPage = () => {
     };
   }, [channel, authUser]);
 
-  const handleVideoCall = () => {
+  const handleVideoCall = async () => {
     if (channel) {
       const callUrl = `${window.location.origin}/call/${channel.id}`;
 
-      channel.sendMessage({
-        text: `🎥 I've started a video call. Click here to join: ${callUrl}`,
-      });
+      try {
+        await channel.sendMessage({
+          text: `🎥 Video Call Started. Click to join: ${callUrl}`,
+          attachments: [
+            {
+              type: "video_call",
+              call_url: callUrl,
+              title: "Join Video Call",
+            },
+          ],
+        });
 
-      toast.success("Video call link sent successfully!");
+        // Navigate the sender to the call page immediately
+        navigate(`/call/${channel.id}`);
+      } catch (error) {
+        console.error("Error starting video call:", error);
+        toast.error("Failed to start video call");
+      }
     }
   };
 
@@ -210,9 +224,9 @@ const ChatPage = () => {
             />
 
             <div className="flex-1 overflow-y-auto min-h-0 bg-base-100/30">
-              <CustomMessageList 
+              <CustomMessageList
                 ref={messageListRef}
-                authUserId={authUser._id} 
+                authUserId={authUser._id}
                 onNewMessageReceived={handleNewMessageReceived}
               />
 

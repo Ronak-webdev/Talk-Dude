@@ -25,6 +25,30 @@ const CustomMessageList = forwardRef(({ authUserId, onNewMessageReceived }, ref)
     const [hoveredMessageId, setHoveredMessageId] = useState(null);
     const [, setTick] = useState(0); // For forcing re-renders every minute
 
+    const renderTextWithLinks = (text) => {
+        if (!text) return null;
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const parts = text.split(urlRegex);
+
+        return parts.map((part, i) => {
+            if (part.match(urlRegex)) {
+                return (
+                    <a
+                        key={i}
+                        href={part}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 underline hover:text-blue-300 break-all"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {part}
+                    </a>
+                );
+            }
+            return part;
+        });
+    };
+
     const formatTime = (date) => {
         return new Intl.DateTimeFormat("en-US", {
             hour: "numeric",
@@ -78,7 +102,7 @@ const CustomMessageList = forwardRef(({ authUserId, onNewMessageReceived }, ref)
 
         const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
         const threshold = 100; // pixels from bottom to consider "scrolled up"
-        
+
         const isScrolledUp = scrollHeight - scrollTop - clientHeight > threshold;
         setIsUserScrolledUp(isScrolledUp);
     };
@@ -86,7 +110,7 @@ const CustomMessageList = forwardRef(({ authUserId, onNewMessageReceived }, ref)
     // Scroll to bottom with smooth animation
     const scrollToBottom = (smooth = true) => {
         if (!scrollRef.current) return;
-        
+
         scrollRef.current.scrollTo({
             top: scrollRef.current.scrollHeight,
             behavior: smooth ? 'smooth' : 'auto',
@@ -97,7 +121,7 @@ const CustomMessageList = forwardRef(({ authUserId, onNewMessageReceived }, ref)
     useEffect(() => {
         const currentCount = messages.length;
         const previousCount = previousMessageCountRef.current;
-        
+
         // Only check for new messages after initial load
         if (previousCount > 0 && currentCount > previousCount) {
             const newMessagesCount = currentCount - previousCount;
@@ -108,7 +132,7 @@ const CustomMessageList = forwardRef(({ authUserId, onNewMessageReceived }, ref)
                 // User is scrolled up and message is from other user
                 // Show indicator instead of auto-scrolling
                 setNewMessageCount(prev => prev + newMessagesCount);
-                
+
                 // Notify parent component about new message
                 if (onNewMessageReceived) {
                     onNewMessageReceived(newMessagesCount);
@@ -127,7 +151,7 @@ const CustomMessageList = forwardRef(({ authUserId, onNewMessageReceived }, ref)
                 scrollToBottom(true);
             }
         }
-        
+
         previousMessageCountRef.current = currentCount;
     }, [messages, authUserId, isUserScrolledUp, onNewMessageReceived]);
 
@@ -298,7 +322,7 @@ const CustomMessageList = forwardRef(({ authUserId, onNewMessageReceived }, ref)
                                                     </div>
                                                 )}
 
-                                                {message.text && <p className="leading-relaxed whitespace-pre-wrap font-medium break-words">{message.text}</p>}
+                                                {message.text && <p className="leading-relaxed whitespace-pre-wrap font-medium break-words">{renderTextWithLinks(message.text)}</p>}
 
                                                 {message.attachments?.length > 0 && (
                                                     <div className="mt-3 sm:mt-4 space-y-3">
@@ -366,6 +390,33 @@ const CustomMessageList = forwardRef(({ authUserId, onNewMessageReceived }, ref)
                                                                                 className="p-2 rounded-lg bg-white/5 hover:bg-white/20 text-white/40 hover:text-white transition-all shadow-xl"
                                                                             >
                                                                                 <Download className="size-5" />
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                );
+                                                            }
+
+                                                            // Video Call attachment
+                                                            if (attachment.type === "video_call") {
+                                                                const callUrl = attachment.call_url || attachment.asset_url;
+                                                                return (
+                                                                    <div key={aIdx} className="p-4 rounded-2xl bg-blue-600/20 border border-blue-500/20 hover:bg-blue-600/30 transition-all group/call max-w-sm">
+                                                                        <div className="flex items-center gap-4">
+                                                                            <div className="p-3 rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/30 group-hover/call:scale-110 transition-transform">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-video"><path d="m22 8-6 4 6 4V8Z" /><rect width="14" height="12" x="2" y="6" rx="2" ry="2" /></svg>
+                                                                            </div>
+                                                                            <div className="flex-1">
+                                                                                <p className="text-sm font-black text-white uppercase tracking-widest">Incoming Call</p>
+                                                                                <p className="text-xs text-white/60 font-medium mt-1">Tap to join the session</p>
+                                                                            </div>
+                                                                            <a
+                                                                                href={callUrl}
+                                                                                className="px-6 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-black uppercase tracking-widest hover:bg-blue-500 transition-all shadow-xl active:scale-95"
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                }}
+                                                                            >
+                                                                                Join
                                                                             </a>
                                                                         </div>
                                                                     </div>

@@ -38,14 +38,9 @@ export const SocketContextProvider = ({ children }) => {
                 // Play sound
                 audioRef.current.play().catch((err) => console.log("Audio play failed", err));
 
-                // Check device width
-                const isSmallDevice = window.innerWidth < 768;
-
-                if (isSmallDevice) {
-                    toast(`New friend request from ${data.sender}`, {
-                        icon: '👋',
-                    });
-                }
+                toast(`New friend request from ${data.sender}`, {
+                    icon: '👋',
+                });
 
                 queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
             });

@@ -75,10 +75,14 @@ const Navbar = ({ toggleSidebar }) => {
           {authUser ? (
             <>
               {/* Notifications */}
-              <Link to="/notifications" className="relative p-2.5 hover:bg-base-content/5 rounded-xl text-base-content/60 hover:text-base-content transition-all">
-                <BellIcon className="size-6" />
+              <Link to="/notifications" className="relative transition-all active:scale-95 group">
+                <div className="p-3 rounded-2xl glass-dark border border-base-content/5 group-hover:bg-base-content/10 transition-all">
+                  <BellIcon className="size-6 text-blue-500" />
+                </div>
                 {totalNotifications > 0 && (
-                  <span className="absolute top-2 right-2 size-2.5 bg-error border-2 border-base-100 rounded-full" />
+                  <span className="absolute -top-1 -right-1 size-5 bg-error text-[10px] font-black text-white border-2 border-base-100 rounded-full flex items-center justify-center">
+                    {totalNotifications > 9 ? '9+' : totalNotifications}
+                  </span>
                 )}
               </Link>
 

@@ -1,10 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { acceptFriendRequest, declineFriendRequest, getFriendRequests } from "../lib/api";
 import { Bell, Clock, Check, X, UserPlus, MessageSquare, AlertCircle } from "lucide-react";
 import NoNotificationsFound from "../components/NoNotificationsFound";
 
 const NotificationsPage = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: friendRequests, isLoading } = useQuery({
     queryKey: ["friendRequests"],
@@ -124,7 +126,11 @@ const NotificationsPage = () => {
 
               <div className="grid gap-3">
                 {acceptedRequests.map((notification) => (
-                  <div key={notification._id} className="glass-dark border border-base-content/5 p-5 rounded-[24px] group hover:bg-base-content/[0.02] transition-all">
+                  <div
+                    key={notification._id}
+                    className="glass-dark border border-base-content/5 p-5 rounded-[24px] group hover:bg-base-content/[0.04] transition-all cursor-pointer active:scale-[0.98]"
+                    onClick={() => navigate(`/chat/${notification.recipient._id}`)}
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-xl overflow-hidden glass border border-base-content/10 p-0.5">

@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { StreamChat } from "stream-chat";
 import useAuthUser from "../hooks/useAuthUser";
 import { useQuery } from "@tanstack/react-query";
@@ -17,6 +18,7 @@ export const ChatContextProvider = ({ children }) => {
     const [chatClient, setChatClient] = useState(null);
     const [unreadCount, setUnreadCount] = useState(0);
     const audioRef = useRef(new Audio("/sounds/msgtone.mp3"));
+    const navigate = useNavigate();
 
     const { data: tokenData } = useQuery({
         queryKey: ["streamToken"],
@@ -67,12 +69,23 @@ export const ChatContextProvider = ({ children }) => {
                     // Play sound
                     audioRef.current.play().catch(e => console.log("Audio play failed", e));
 
-                    const isSmallDevice = window.innerWidth < 768;
                     const isChatOpen = window.location.pathname.includes(`/chat/${event.user.id}`);
 
-                    if (isSmallDevice && !isChatOpen) {
-                        toast(`${event.user.name}: ${event.message.text}`, {
+                    if (!isChatOpen) {
+                        toast((t) => (
+                            <div
+                                onClick={() => {
+                                    navigate(`/chat/${event.user.id}`);
+                                    toast.dismiss(t.id);
+                                }}
+                                className="cursor-pointer flex items-center gap-3"
+                            >
+                                <span className="font-bold">{event.user.name}:</span>
+                                <span>{event.message.text}</span>
+                            </div>
+                        ), {
                             icon: '💬',
+                            duration: 4000,
                         });
                     }
                 });

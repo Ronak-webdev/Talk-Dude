@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuthUser from "../hooks/useAuthUser";
 import {
   cancelFriendRequest,
   getOutgoingFriendReqs,
   getRecommendedUsers,
+  getUserFriends,
   sendFriendRequest,
 } from "../lib/api";
 import {
@@ -18,6 +19,7 @@ import {
   Users,
   CheckCircle2,
   UserPlus,
+  MessageCircle,
 } from "lucide-react";
 import { capitialize } from "../lib/utils";
 import { getLanguageFlag } from "../components/FriendCard";
@@ -25,6 +27,7 @@ import { getLanguageFlag } from "../components/FriendCard";
 const HomePage = () => {
   const { authUser } = useAuthUser();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [outgoingRequestsIds, setOutgoingRequestsIds] = useState(new Set());
 
   const { data: recommendedUsers = [], isLoading: loadingUsers } = useQuery({
@@ -36,6 +39,12 @@ const HomePage = () => {
   const { data: outgoingFriendReqs = [] } = useQuery({
     queryKey: ["outgoingFriendReqs"],
     queryFn: getOutgoingFriendReqs,
+    enabled: !!authUser,
+  });
+
+  const { data: friends = [] } = useQuery({
+    queryKey: ["friends"],
+    queryFn: getUserFriends,
     enabled: !!authUser,
   });
 
@@ -169,6 +178,8 @@ const HomePage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {recommendedUsers?.map((user) => {
                 const hasRequestBeenSent = outgoingRequestsIds.has(user._id);
+                const isFriend = Array.isArray(friends) && friends.some(f => f._id === user._id);
+
                 return (
                   <div key={user._id} className="card-vibrant group flex flex-col h-full hover:border-blue-500 overflow-hidden">
                     <div className="relative h-48 sm:h-56 overflow-hidden">
@@ -205,11 +216,23 @@ const HomePage = () => {
                             ? "bg-base-content/5 text-base-content/20 cursor-not-allowed"
                             : "btn-premium"
                             }`}
-                          onClick={() => sendRequestMutation(user._id)}
-                          disabled={hasRequestBeenSent || isPending}
+                          onClick={() => {
+                            if (isFriend) {
+                              navigate(`/chat/${user._id}`);
+                            } else if (!hasRequestBeenSent) {
+                              sendRequestMutation(user._id);
+                            }
+                          }}
+                          disabled={(hasRequestBeenSent && !isFriend) || isPending}
                         >
-                          {hasRequestBeenSent ? <CheckCircle2 className="size-5 text-blue-500" /> : <UserPlus className="size-5" />}
-                          {hasRequestBeenSent ? "REQUESTED" : "CONNECT"}
+                          {hasRequestBeenSent ? (
+                            <CheckCircle2 className="size-5 text-blue-500" />
+                          ) : isFriend ? (
+                            <MessageCircle className="size-5" />
+                          ) : (
+                            <UserPlus className="size-5" />
+                          )}
+                          {hasRequestBeenSent ? "REQUESTED" : isFriend ? "QUICK CHAT" : "CONNECT"}
                         </button>
                       </div>
                     </div>
