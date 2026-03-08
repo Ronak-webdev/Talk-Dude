@@ -46,11 +46,11 @@
 
 @layer components {
     .glass {
-        @apply bg-[#1a1d2e] border border-white/20 shadow-xl;
+        @apply bg-[#1a1d2e]/95 border border-white/20 shadow-xl backdrop-blur-md;
     }
 
     .glass-dark {
-        @apply bg-[#0f111a] border border-white/10 shadow-2xl;
+        @apply bg-[#0f111a]/95 border border-white/10 shadow-2xl backdrop-blur-md;
     }
 
     .btn-premium {

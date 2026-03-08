@@ -34,12 +34,19 @@ export const setAuthToken = (token) => {
 
 // Request interceptor
 axiosInstance.interceptors.request.use(
-  (config) => {
-    // You can add auth tokens here if needed
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+  async (config) => {
+    // Get Clerk token if available
+    const { clerk } = window;
+    if (clerk && clerk.session) {
+      try {
+        const token = await clerk.session.getToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+      } catch (error) {
+        console.error('Error getting Clerk token:', error);
+      }
+    }
     return config;
   },
   (error) => {

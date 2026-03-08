@@ -1,6 +1,20 @@
 import { axiosInstance, setAuthToken } from "./axios";
+import { clerkClient } from '@clerk/clerk-react';
 
 export { setAuthToken };
+
+// Helper function to get Clerk token
+const getClerkToken = async () => {
+  try {
+    if (window.clerk && window.clerk.session) {
+      return await window.clerk.session.getToken();
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting Clerk token:', error);
+    return null;
+  }
+};
 
 export const signup = async (signupData) => {
   const response = await axiosInstance.post("/auth/signup", signupData);
@@ -44,6 +58,8 @@ export async function getRecommendedUsers() {
 }
 
 export async function getOutgoingFriendReqs() {
+  const token = await getClerkToken();
+  if (token) setAuthToken(token);
   const response = await axiosInstance.get("/users/outgoing-friend-requests");
   return response.data;
 }
@@ -54,6 +70,8 @@ export async function sendFriendRequest(userId) {
 }
 
 export async function getFriendRequests() {
+  const token = await getClerkToken();
+  if (token) setAuthToken(token);
   const response = await axiosInstance.get("/users/friend-requests");
   return response.data;
 }
@@ -64,6 +82,8 @@ export async function acceptFriendRequest(requestId) {
 }
 
 export async function getStreamToken() {
+  const token = await getClerkToken();
+  if (token) setAuthToken(token);
   const response = await axiosInstance.get("/chat/token");
   return response.data;
 }
