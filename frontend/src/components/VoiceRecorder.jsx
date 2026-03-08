@@ -96,7 +96,7 @@ const VoiceRecorder = ({ onSend, onCancel }) => {
                         </div>
                         <span className="text-sm font-bold font-mono text-red-500 min-w-[40px]">{formatTime(recordingTime)}</span>
                     </div>
-                    <div className="w-[2px] h-4 bg-white/10" />
+                    <div className="w-[2px] h-4 bg-base-content/10" />
                     <button
                         type="button"
                         onClick={stopRecording}
@@ -108,7 +108,7 @@ const VoiceRecorder = ({ onSend, onCancel }) => {
                     <button
                         type="button"
                         onClick={handleCancel}
-                        className="p-1.5 rounded-xl hover:bg-white/10 text-white/60 transition-colors"
+                        className="p-1.5 rounded-xl hover:bg-base-content/10 text-base-content/60 transition-colors"
                         title="Cancel"
                     >
                         <Trash2 className="size-4" />
@@ -117,13 +117,13 @@ const VoiceRecorder = ({ onSend, onCancel }) => {
             ) : audioBlob ? (
                 <div className="flex items-center gap-3 glass-dark border border-blue-500/20 px-4 py-2 rounded-2xl animate-in zoom-in duration-300">
                     <span className="text-sm font-semibold text-blue-400">Audio Ready ({formatTime(recordingTime)})</span>
-                    <div className="w-[2px] h-4 bg-white/10" />
+                    <div className="w-[2px] h-4 bg-base-content/10" />
                     <div className="flex gap-2">
                         <button
                             type="button"
                             onClick={handleSend}
                             disabled={isUploading}
-                            className="p-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50"
+                            className="p-2 rounded-xl bg-primary hover:bg-primary/90 text-primary-content shadow-primary/20 transition-all disabled:opacity-50"
                         >
                             {isUploading ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
                         </button>
@@ -131,7 +131,7 @@ const VoiceRecorder = ({ onSend, onCancel }) => {
                             type="button"
                             onClick={handleCancel}
                             disabled={isUploading}
-                            className="p-2 rounded-xl hover:bg-white/10 text-white/60 transition-colors"
+                            className="p-2 rounded-xl hover:bg-base-content/10 text-base-content/60 transition-colors"
                         >
                             <X className="size-4" />
                         </button>
@@ -141,7 +141,7 @@ const VoiceRecorder = ({ onSend, onCancel }) => {
                 <button
                     type="button"
                     onClick={startRecording}
-                    className="p-3 rounded-2xl glass hover:bg-white/10 text-white transition-all group active:scale-95"
+                    className="p-3 rounded-2xl glass hover:bg-base-content/10 text-base-content transition-all group active:scale-95"
                     title="Record Voice"
                 >
                     <Mic className="size-5 group-hover:scale-110 group-hover:text-blue-400 transition-all" />

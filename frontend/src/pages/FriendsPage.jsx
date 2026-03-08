@@ -21,50 +21,60 @@ const FriendsPage = () => {
   });
 
   return (
-    <div className="max-w-7xl mx-auto space-y-10 animate-in fade-in duration-700">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+    <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in duration-1000">
+      {/* Header Section */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pb-8 border-b border-base-content/5">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-            Your Network
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-base-content mb-3">
+            Your Circle
           </h1>
-          <p className="text-white/40 font-medium mt-1 italic">Connect and grow with your learning community</p>
+          <p className="text-base-content/40 font-bold uppercase tracking-[0.2em] text-[10px] sm:text-xs">
+            Connect and grow with your learning community
+          </p>
         </div>
 
-        <div className="flex items-center gap-3 glass-dark border border-white/5 p-2 rounded-2xl w-full md:w-80 group focus-within:border-blue-500/30 transition-all">
-          <Search className="size-5 text-white/20 ml-2 group-focus-within:text-blue-500 transition-colors" />
-          <input
-            type="text"
-            placeholder="Search connections..."
-            className="bg-transparent border-none outline-none text-sm text-white placeholder:text-white/20 w-full py-2"
-          />
+        <div className="w-full lg:w-[450px]">
+          <div className="relative group">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 size-5 text-base-content/20 group-focus-within:text-blue-500 transition-colors" />
+            <input
+              type="text"
+              placeholder="Search by name, language or ID..."
+              className="w-full bg-base-200 border border-base-content/5 focus:border-blue-500/30 rounded-3xl pl-14 pr-6 py-5 text-base-content outline-none transition-all placeholder:text-base-content/10 shadow-xl"
+            />
+          </div>
         </div>
       </div>
 
       {loadingFriends ? (
-        <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <div className="flex flex-col items-center justify-center py-32 gap-6 bg-base-200/30 rounded-[48px] border border-dashed border-base-content/5">
           <div className="relative">
-            <div className="w-16 h-16 rounded-full border-4 border-white/5 animate-pulse" />
-            <div className="absolute inset-0 border-t-4 border-blue-500 rounded-full animate-spin" />
+            <div className="w-20 h-20 rounded-full border-[6px] border-base-content/5 animate-pulse" />
+            <div className="absolute inset-0 border-t-[6px] border-blue-600 rounded-full animate-spin" />
           </div>
-          <p className="text-white/40 font-bold uppercase tracking-[2px] text-xs">Loading Circle...</p>
+          <p className="text-base-content/20 font-black uppercase tracking-[0.3em] text-[10px] animate-bounce">
+            Expanding your world...
+          </p>
         </div>
       ) : friends.length === 0 ? (
-        <div className="glass-dark border border-white/5 rounded-[40px] p-20 flex flex-col items-center text-center">
-          <div className="p-6 rounded-[32px] bg-blue-600/10 mb-6">
-            <Users className="size-12 text-blue-500" />
+        <div className="bg-gradient-to-b from-[#0f111a] to-transparent border border-base-content/10 rounded-[48px] p-12 sm:p-24 flex flex-col items-center text-center shadow-2xl">
+          <div className="p-8 rounded-[40px] bg-blue-600/10 mb-10 ring-1 ring-blue-500/20 shadow-blue-500/10 shadow-2xl">
+            <Users className="size-16 text-blue-500" />
           </div>
-          <h3 className="text-2xl font-bold text-white mb-2">No connections yet</h3>
-          <p className="text-white/40 max-w-sm">Start exploring profiles to find mentors and language partners to join your learning journey.</p>
+          <h3 className="text-3xl font-black text-base-content mb-4">Finding Your First Match</h3>
+          <p className="text-base-content/30 max-w-sm font-medium leading-relaxed">
+            Your learning circle is empty. Head to the <span className="text-blue-500">Explore</span> page to find your perfect language partner.
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8 pb-12">
           {friends.map((friend) => (
-            <FriendCard
-              key={friend._id}
-              friend={friend}
-              onUnfriend={() => unfriendMutation(friend._id)}
-              isUnfriending={isUnfriending}
-            />
+            <div key={friend._id} className="animate-in fade-in slide-in-from-bottom duration-500">
+              <FriendCard
+                friend={friend}
+                onUnfriend={() => unfriendMutation(friend._id)}
+                isUnfriending={isUnfriending}
+              />
+            </div>
           ))}
         </div>
       )}

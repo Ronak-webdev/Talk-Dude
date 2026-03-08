@@ -29,6 +29,10 @@ createRoot(document.getElementById("root")).render(
       afterSignOutUrl="/"
       signInUrl="/login"
       signUpUrl="/signup"
+      appearance={{
+        baseTheme: undefined,
+        variables: { colorPrimary: "#2563eb" },
+      }}
     >
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>

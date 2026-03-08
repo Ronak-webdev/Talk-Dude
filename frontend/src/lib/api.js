@@ -42,16 +42,22 @@ export const getAuthUser = async () => {
 };
 
 export const completeOnboarding = async (userData) => {
+  const token = await getClerkToken();
+  if (token) setAuthToken(token);
   const response = await axiosInstance.post("/auth/onboarding", userData);
   return response.data.user; // Extract user from {success, user}
 };
 
 export async function getUserFriends() {
+  const token = await getClerkToken();
+  if (token) setAuthToken(token);
   const response = await axiosInstance.get("/users/friends");
   return response.data;
 }
 
 export async function getRecommendedUsers() {
+  const token = await getClerkToken();
+  if (token) setAuthToken(token);
   const response = await axiosInstance.get("/users");
   return response.data;
 }
@@ -64,6 +70,8 @@ export async function getOutgoingFriendReqs() {
 }
 
 export async function sendFriendRequest(userId) {
+  const token = await getClerkToken();
+  if (token) setAuthToken(token);
   const response = await axiosInstance.post(`/users/friend-request/${userId}`);
   return response.data;
 }
@@ -76,6 +84,8 @@ export async function getFriendRequests() {
 }
 
 export async function acceptFriendRequest(requestId) {
+  const token = await getClerkToken();
+  if (token) setAuthToken(token);
   const response = await axiosInstance.put(`/users/friend-request/${requestId}/accept`);
   return response.data;
 }
@@ -88,16 +98,39 @@ export async function getStreamToken() {
 }
 
 export async function declineFriendRequest(requestId) {
+  const token = await getClerkToken();
+  if (token) setAuthToken(token);
   const response = await axiosInstance.put(`/users/friend-request/${requestId}/decline`);
   return response.data;
 }
 
 export async function cancelFriendRequest(requestId) {
+  const token = await getClerkToken();
+  if (token) setAuthToken(token);
   const response = await axiosInstance.delete(`/users/friend-request/${requestId}/cancel`);
   return response.data;
 }
 
 export async function unfriend(friendId) {
+  const token = await getClerkToken();
+  if (token) setAuthToken(token);
   const response = await axiosInstance.delete(`/users/friends/${friendId}`);
+  return response.data;
+}
+
+// Message management functions
+export async function deleteMessage(messageId, deleteType = 'everyone') {
+  const token = await getClerkToken();
+  if (token) setAuthToken(token);
+  const response = await axiosInstance.delete(`/chat/messages/${messageId}`, {
+    params: { deleteType } // 'me' or 'everyone'
+  });
+  return response.data;
+}
+
+export async function replyToMessage(messageId, replyData) {
+  const token = await getClerkToken();
+  if (token) setAuthToken(token);
+  const response = await axiosInstance.post(`/chat/messages/${messageId}/reply`, replyData);
   return response.data;
 }

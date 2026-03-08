@@ -39,9 +39,14 @@ axiosInstance.interceptors.request.use(
     const { clerk } = window;
     if (clerk && clerk.session) {
       try {
-        const token = await clerk.session.getToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+        // Use getSession() method which is more reliable
+        const session = await clerk.getSession();
+        if (session) {
+          const token = await session.getToken();
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+            console.log('[AUTH] Token attached to request:', config.url);
+          }
         }
       } catch (error) {
         console.error('Error getting Clerk token:', error);

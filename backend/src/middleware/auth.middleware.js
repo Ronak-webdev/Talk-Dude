@@ -4,10 +4,14 @@ import { upsertStreamUser } from "../lib/stream.js";
 
 export const protectRoute = async (req, res, next) => {
   try {
+    console.log(`\n=== [AUTH MIDDLEWARE] ${req.method} ${req.path} ===`);
+    console.log('[AUTH MIDDLEWARE] Headers:', JSON.stringify(req.headers, null, 2));
+    
     const { userId } = getAuth(req);
-    console.log(`[AUTH MIDDLEWARE] Processing request for Clerk ID: ${userId || "None"}`);
+    console.log(`[AUTH MIDDLEWARE] Clerk ID from token: ${userId || "None"}`);
 
     if (!userId) {
+      console.error('[AUTH MIDDLEWARE] No Clerk session found. Authorization header:', req.headers.authorization?.substring(0, 50));
       return res.status(401).json({ message: "Unauthorized - No Clerk session found" });
     }
 

@@ -1,119 +1,90 @@
 import { Link, useLocation } from "react-router-dom";
 import useAuthUser from "../hooks/useAuthUser";
-import { Bell, Home, MessageSquare, Users, X, Settings, LogOut } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { getFriendRequests } from "../lib/api";
-import { useChatContext } from "../context/ChatContext";
+import { MessageSquare, Users, Globe, Settings, LogOut, ChevronRight, LayoutDashboard } from "lucide-react";
 import useLogout from "../hooks/useLogout";
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { authUser } = useAuthUser();
   const { executeLogout } = useLogout();
-  console.log("DEBUG: Sidebar using executeLogout. VERSION_CHECK: FINAL_LOGOUT_FIX_VER_2");
-  console.log("[SIDEBAR] executeLogout defined:", !!executeLogout);
   const location = useLocation();
-  const currentPath = location.pathname;
 
-  const { data: friendRequests } = useQuery({
-    queryKey: ["friendRequests"],
-    queryFn: getFriendRequests,
-    enabled: !!authUser,
-  });
+  if (!authUser) return null;
 
-  const { unreadCount } = useChatContext();
-
-  const incomingReqs = friendRequests?.incomingReqs || [];
-  const totalNotifications = incomingReqs.length + (unreadCount || 0);
-
-  const navItems = [
-    { label: "Overview", path: "/", icon: Home },
-    { label: "Community", path: "/friends", icon: Users },
-    { label: "Updates", path: "/notifications", icon: Bell, badge: totalNotifications },
+  const menuItems = [
+    { title: "Dashboard", path: "/", icon: <LayoutDashboard className="size-5" /> },
+    { title: "Explore", path: "/community", icon: <Globe className="size-5" /> }, 
+    { title: "Connections", path: "/friends", icon: <Users className="size-5" /> },
+    { title: "Settings", path: "/onboarding", icon: <Settings className="size-5" /> },
   ];
 
   return (
-    <aside className="w-full flex flex-col h-full bg-transparent p-6">
-      {/* Close button for mobile */}
-      <div className="lg:hidden flex justify-end mb-4">
-        <button
-          onClick={() => document.querySelector('.drawer-toggle').click()}
-          className="p-2 rounded-xl hover:bg-white/5 text-white/60 transition-colors"
-        >
-          <X className="h-6 w-6" />
-        </button>
-      </div>
-
-      {/* Brand */}
-      <div className="mb-10 group">
-        <Link to="/" className="flex items-center gap-3">
+    <aside
+      className={`fixed inset-y-0 left-0 z-40 w-72 bg-base-200/98 backdrop-blur-xl border-r border-base-content/10 transition-transform duration-500 ease-in-out transform lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+    >
+      <div className="flex flex-col h-full p-6 pt-24 lg:pt-8">
+        {/* Brand Logo - Desktop Only */}
+        <Link to="/" className="hidden lg:flex items-center gap-3 group px-2 py-1 rounded-2xl hover:bg-white/5 transition-all mb-8">
           <div className="bg-gradient-to-tr from-blue-600 to-purple-600 p-2.5 rounded-2xl shadow-lg shadow-blue-500/20 group-hover:rotate-12 transition-transform duration-500">
-            <MessageSquare className="h-7 w-7 text-white" />
+            <MessageSquare className="h-6 w-6 text-white stroke-[2.5px]" />
           </div>
-          <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+          <span className="text-2xl font-bold tracking-tight text-base-content">
             TalkDude
           </span>
         </Link>
-      </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 space-y-2">
-        <p className="text-[11px] font-bold text-white/30 uppercase tracking-[2px] ml-3 mb-4">Menu</p>
-        {navItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all group ${currentPath === item.path
-              ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
-              : "text-white/50 hover:bg-white/5 hover:text-white"
-              }`}
-            onClick={() => window.innerWidth < 1024 && document.querySelector('.drawer-toggle').click()}
-          >
-            <div className="flex items-center gap-3">
-              <item.icon className={`h-5 w-5 transition-transform group-hover:scale-110 ${currentPath === item.path ? "text-white" : "text-white/40"}`} />
-              <span className="font-semibold text-[15px]">{item.label}</span>
-            </div>
-            {item.badge > 0 && (
-              <span className="bg-white/10 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-md">
-                {item.badge}
-              </span>
-            )}
-          </Link>
-        ))}
-      </nav>
-
-      {/* User Profile */}
-      <div className="mt-auto pt-6 border-t border-white/5 space-y-2">
-        <Link
-          to="/onboarding"
-          className="flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-all group"
-          onClick={() => window.innerWidth < 1024 && document.querySelector('.drawer-toggle').click()}
-        >
+        {/* Profile Header */}
+        <div className="flex items-center gap-4 mb-10 p-4 rounded-3xl bg-base-300/80 border border-base-content/10 backdrop-blur-sm">
           <div className="relative">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-500/20 to-purple-500/20 p-[1px] group-hover:scale-105 transition-transform">
-              <div className="w-full h-full rounded-xl overflow-hidden bg-background">
-                <img
-                  src={authUser?.profilePic || '/default-avatar.png'}
-                  alt={authUser?.fullName}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-            <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-green-500 border-[3px] border-background" />
+            <img
+              src={authUser.profilePic}
+              className="size-14 rounded-2xl object-cover ring-4 ring-blue-600/10"
+              alt=""
+            />
+            <div className="absolute -bottom-1 -right-1 size-4 bg-green-500 border-2 border-base-100 rounded-full" />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-bold text-[15px] text-white truncate">{authUser?.fullName || 'User'}</p>
-            <p className="text-[11px] text-white/40 font-medium">View Profile</p>
+          <div className="min-w-0">
+            <h2 className="font-black text-base-content truncate leading-tight">{authUser.fullName}</h2>
+            <p className="text-xs text-primary font-bold uppercase tracking-widest mt-0.5">Learner</p>
           </div>
-          <Settings className="size-4 text-white/30 group-hover:text-white transition-colors" />
-        </Link>
+        </div>
 
-        <button
-          onClick={() => executeLogout()}
-          className="flex items-center gap-4 p-3 rounded-2xl hover:bg-red-500/10 text-red-400/70 hover:text-red-400 transition-all group w-full"
-        >
-          <LogOut className="size-5 transition-transform group-hover:rotate-12" />
-          <span className="font-bold text-[15px]">Sign Out</span>
-        </button>
+        {/* Navigation Links */}
+        <nav className="flex-1 space-y-2">
+          {menuItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={() => toggleSidebar && toggleSidebar()}
+              className={`flex items-center justify-between p-4 rounded-2xl transition-all duration-300 group ${location.pathname === item.path
+                ? "bg-primary text-primary-content shadow-xl shadow-primary/20"
+                : "text-base-content/60 hover:bg-base-300 hover:text-base-content"
+                }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`${location.pathname === item.path ? "text-primary-content" : "text-primary"} group-hover:scale-110 transition-transform`}>
+                  {item.icon}
+                </div>
+                <span className="font-black uppercase tracking-tighter text-sm">{item.title}</span>
+              </div>
+              <ChevronRight className={`size-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all ${location.pathname === item.path ? "opacity-100" : ""}`} />
+            </Link>
+          ))}
+        </nav>
+
+        {/* Logout Section */}
+        <div className="pt-6 border-t border-base-content/5 mt-auto">
+          <button
+            onClick={() => {
+              toggleSidebar && toggleSidebar();
+              executeLogout();
+            }}
+            className="btn-danger w-full py-5 flex items-center justify-center gap-3 text-sm font-black tracking-widest"
+          >
+            <LogOut className="size-5" />
+            SIGN OUT
+          </button>
+        </div>
       </div>
     </aside>
   );

@@ -1,5 +1,6 @@
 import { upsertStreamUser } from "../lib/stream.js";
 import User from "../models/User.js";
+import cloudinary from "../lib/cloudinary.js";
 import jwt from "jsonwebtoken";
 
 function getCookieOptions() {
@@ -31,12 +32,26 @@ export async function onboard(req, res) {
   try {
     const userId = req.user._id;
 
-    const { fullName, bio, nativeLanguage, learningLanguage, location, profilePic } = req.body;
+    let { fullName, bio, nativeLanguage, learningLanguage, location, profilePic } = req.body;
 
     if (!fullName || !bio || !nativeLanguage || !learningLanguage || !location) {
       return res.status(400).json({
         message: "All fields are required",
       });
+    }
+
+    // Upload to cloudinary if profilePic is provided as base64
+    if (profilePic && profilePic.startsWith("data:image")) {
+      try {
+        const uploadResponse = await cloudinary.uploader.upload(profilePic, {
+          folder: "talk_dude_profiles",
+        });
+        profilePic = uploadResponse.secure_url;
+      } catch (uploadError) {
+        console.error("Cloudinary upload error:", uploadError);
+        // Fallback to original if upload fails, or handle as error
+        return res.status(500).json({ message: "Failed to upload profile picture" });
+      }
     }
 
     const updatedUser = await User.findByIdAndUpdate(

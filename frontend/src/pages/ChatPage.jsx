@@ -20,6 +20,9 @@ import ChatLoader from "../components/ChatLoader";
 import CustomChatHeader from "../components/CustomChatHeader";
 import CustomMessageList from "../components/CustomMessageList";
 import CustomMessageInput from "../components/CustomMessageInput";
+import ChatSettings from "../components/ChatSettings";
+import SystemMessage from "../components/SystemMessage";
+import NewMessageIndicator from "../components/NewMessageIndicator";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
@@ -30,6 +33,10 @@ const ChatPage = () => {
   const [channel, setChannel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [targetUser, setTargetUser] = useState(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [systemMessages, setSystemMessages] = useState([]);
+  const [showNewMessageIndicator, setShowNewMessageIndicator] = useState(false);
+  const messageListRef = useRef(null);
 
   const { authUser } = useAuthUser();
 
@@ -58,6 +65,27 @@ const ChatPage = () => {
     createChannel();
   }, [chatClient, authUser, targetUserId]);
 
+  // Initialize screenshot detection
+  useEffect(() => {
+    if (!channel || !authUser) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'PrintScreen' || e.key === 'PrtSc' || (e.ctrlKey && e.shiftKey && e.key === 'S')) {
+        addSystemMessage('screenshot');
+        toast.error('Screenshot detected!', {
+          icon: '⚠️',
+          duration: 3000,
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [channel, authUser]);
+
   const handleVideoCall = () => {
     if (channel) {
       const callUrl = `${window.location.origin}/call/${channel.id}`;
@@ -70,12 +98,43 @@ const ChatPage = () => {
     }
   };
 
-  const handleSendMessage = async (text) => {
+  const handleSendMessage = async (text, replyingTo = null, file = null, isViewOnce = false) => {
     if (!channel) return;
     try {
-      await channel.sendMessage({ text });
+      const messageData = { text };
+
+      if (replyingTo) {
+        messageData.quoted_message_id = replyingTo.id;
+        messageData.parent_id = replyingTo.parent_id || null;
+      }
+
+      if (file) {
+        toast.loading("Uploading file...", { id: "uploading" });
+        const response = await channel.sendFile(file);
+        toast.dismiss("uploading");
+
+        const isImage = file.type.startsWith("image");
+        messageData.attachments = [
+          {
+            type: isImage ? "image" : "file",
+            asset_url: response.file,
+            image_url: isImage ? response.file : undefined, // Ensure image_url is set for images
+            file_size: file.size,
+            mime_type: file.type,
+            title: file.name,
+            oneTimeView: isViewOnce, // Custom metadata for view once
+          },
+        ];
+
+        if (isViewOnce) {
+          messageData.text = messageData.text || "📷 Shared a one-time view image";
+        }
+      }
+
+      await channel.sendMessage(messageData);
     } catch (error) {
       console.error("Error sending message:", error);
+      toast.dismiss("uploading");
       toast.error("Failed to send message");
     }
   };
@@ -110,34 +169,94 @@ const ChatPage = () => {
     }
   };
 
+
+  const addSystemMessage = async (type) => {
+    const systemMsg = {
+      id: `sys-${Date.now()}`,
+      type: 'system',
+      messageType: type,
+      username: type === 'screenshot' ? authUser.fullName : 'System',
+      timestamp: new Date().toLocaleTimeString(),
+    };
+
+    setSystemMessages(prev => [...prev, systemMsg]);
+
+    // In real implementation, save to backend
+    console.log('System message:', systemMsg);
+  };
+
+  // Handle new message notification from CustomMessageList
+  const handleNewMessageReceived = (count) => {
+    setShowNewMessageIndicator(true);
+  };
+
   if (loading || !chatClient || !channel) return <ChatLoader />;
 
   return (
-    <div className="h-screen flex flex-col bg-background relative overflow-hidden">
+    <div className="flex flex-col h-[100dvh] w-full bg-transparent relative overflow-hidden">
       {/* Background Gradients */}
-      <div className="absolute inset-0 pointer-events-none opacity-10">
-        <div className="absolute top-[10%] left-[-10%] w-[50%] h-[50%] bg-blue-600 rounded-full blur-[140px]" />
-        <div className="absolute bottom-[10%] right-[-10%] w-[50%] h-[50%] bg-purple-600 rounded-full blur-[140px]" />
+      <div className="absolute inset-0 pointer-events-none opacity-5">
+        <div className="absolute top-[10%] left-[-10%] w-[50%] h-[50%] bg-blue-600 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[10%] right-[-10%] w-[50%] h-[50%] bg-purple-600 rounded-full blur-[120px]" />
       </div>
 
       <Chat client={chatClient}>
         <Channel channel={channel}>
-          <div className="flex-1 flex flex-col min-w-0 bg-transparent overflow-hidden relative z-10">
+          <div className="flex-1 flex flex-col min-w-0 w-full relative z-10 overflow-hidden">
             <CustomChatHeader
               targetUser={targetUser}
               onVideoCall={handleVideoCall}
+              onOpenSettings={() => setSettingsOpen(true)}
             />
 
-            <CustomMessageList authUserId={authUser._id} />
+            <div className="flex-1 overflow-y-auto min-h-0 bg-base-100/30">
+              <CustomMessageList 
+                ref={messageListRef}
+                authUserId={authUser._id} 
+                onNewMessageReceived={handleNewMessageReceived}
+              />
 
-            <CustomMessageInput
-              onSendMessage={handleSendMessage}
-              onSendAudio={handleSendAudio}
-            />
+              {/* System Messages */}
+              {systemMessages.map((msg) => (
+                <SystemMessage
+                  key={msg.id}
+                  type={msg.messageType}
+                  username={msg.username}
+                  timestamp={msg.timestamp}
+                />
+              ))}
+            </div>
+
+            <div className="flex-shrink-0 border-none bg-base-200/50">
+              <CustomMessageInput
+                onSendMessage={handleSendMessage}
+                onSendAudio={handleSendAudio}
+              />
+            </div>
           </div>
           <Thread />
         </Channel>
       </Chat>
+
+      {/* Chat Settings Modal */}
+      <ChatSettings
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        channel={channel}
+        targetUser={targetUser}
+      />
+
+      {/* New Message Indicator */}
+      {showNewMessageIndicator && (
+        <NewMessageIndicator
+          onClick={() => {
+            if (messageListRef.current) {
+              messageListRef.current.scrollToBottom(true);
+            }
+            setShowNewMessageIndicator(false);
+          }}
+        />
+      )}
     </div>
   );
 };
