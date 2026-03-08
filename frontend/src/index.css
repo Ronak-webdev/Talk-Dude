@@ -54,7 +54,18 @@
     }
 
     .btn-premium {
-        @apply relative overflow-hidden px-6 py-3 rounded-full font-semibold transition-all duration-300 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:scale-105 hover:shadow-[0_0_20px_rgba(79, 70, 229, 0.5)] active:scale-95;
+        @apply relative overflow-hidden px-6 py-3 rounded-full font-semibold transition-all duration-300;
+        background: linear-gradient(to right, #2563eb, #9333ea);
+        color: white;
+    }
+
+    .btn-premium:hover {
+        @apply scale-105;
+        box-shadow: 0 0 20px rgba(79, 70, 229, 0.5);
+    }
+
+    .btn-premium:active {
+        @apply scale-95;
     }
 
     .chat-bubble-user {

@@ -11,15 +11,13 @@ const io = new Server(server, {
             "http://localhost:5173",
             "http://localhost:5174",
             "http://localhost:3000",
+            process.env.CLIENT_URL,
             "https://talktribebyvp.vercel.app",
             "https://talktribe.vercel.app",
             "https://talk-dude.vercel.app",
-            "https://talk-dude-2.onrender.com",
-            "https://talk-dude-3.onrender.com",
-            "https://talk-dude-4.onrender.com",
             "http://192.168.1.9:5173",
             "http://192.168.117.32:5173",
-        ],
+        ].filter(Boolean),
     },
 });
 
