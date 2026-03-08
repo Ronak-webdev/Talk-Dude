@@ -24,7 +24,12 @@ const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+    <ClerkProvider
+      publishableKey={PUBLISHABLE_KEY}
+      afterSignOutUrl="/"
+      signInUrl="/login"
+      signUpUrl="/signup"
+    >
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
           <SocketContextProvider>
