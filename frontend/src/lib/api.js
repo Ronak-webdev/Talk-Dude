@@ -1,5 +1,4 @@
 import { axiosInstance, setAuthToken } from "./axios";
-import { clerkClient } from '@clerk/clerk-react';
 
 export { setAuthToken };
 
